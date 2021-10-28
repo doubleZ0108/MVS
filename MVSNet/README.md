@@ -4,8 +4,6 @@ MVSNet: Depth Inference for Unstructured Multi-view Stereo
 
 ECCV 2018
 
-[toc]
-
 -----
 
 ## 1 核心思路
@@ -88,7 +86,7 @@ ECCV 2018
 
 通过方差（分别减平均后的平方除总数）将所有feature volumns编码得到一个cost volumn
 
-❌所有视点对于匹配代价贡献相同
+所有视点对于匹配代价贡献相同
 
 **Cost Volumn Regularization**
 

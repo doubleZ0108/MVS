@@ -3,7 +3,7 @@
 
 MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch Implementation of MVSNet](https://github.com/xy-guo/MVSNet_pytorch)
 
-## 总体结构
+## 1 总体结构
 
 对于训练核心的代码有如下几个：
 
@@ -24,7 +24,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 
 ---
 
-## DTU数据集结构
+## 2 DTU数据集结构
 
 共128个scan
 
@@ -32,7 +32,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 - val: 18个
 - test: 22个
 
-### Train
+### 2.1 Train
 
 【Cameras】
 
@@ -73,7 +73,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 - 命名：`rect_[view]_[light]_r5000.png`
 - 图片尺寸：640*512
 
-### Test
+### 2.2 Test
 
 共有22个基准测试场景，对于每一个scan文件夹
 
@@ -83,7 +83,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 
 ---
 
-## 具体模块
+## 3 具体模块
 
 ### 代码中的数据维度
 
@@ -322,7 +322,7 @@ def train_sample(sample, detailed_summary=False):
 
 ---
 
-## PyTorch技巧
+## 4 PyTorch技巧
 
 - tensorboard中使用SummaryWriter记录训练可视化
 - 提升计算速度(但计算中可能有随机性导致网络前馈结果略有差异)
