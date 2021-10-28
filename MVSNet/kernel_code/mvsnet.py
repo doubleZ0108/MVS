@@ -5,6 +5,10 @@ from .module import *
 
 
 class FeatureNet(nn.Module):
+    """
+    in: [3, H, W]
+    out: [32, H/4, W/4] (32, 160, 128)
+    """
     def __init__(self):
         super(FeatureNet, self).__init__()
         self.inplanes = 32
@@ -28,17 +32,21 @@ class FeatureNet(nn.Module):
 
 
 class CostRegNet(nn.Module):
+    """
+    in: [B, C, D, H/4, W/4] (B, 32, 192. H/4, W/4)
+    out: [B, 1, D, H/4, W/4] (B, 1, 192, 160, 128)
+    """
     def __init__(self):
         super(CostRegNet, self).__init__()
-        self.conv0 = ConvBnReLU3D(32, 8)
+        self.conv0 = ConvBnReLU3D(32, 8)            # [B, 8, D, H/4, W/4]
 
-        self.conv1 = ConvBnReLU3D(8, 16, stride=2)
+        self.conv1 = ConvBnReLU3D(8, 16, stride=2)  # [B, 16, D/2, H/8, W/8]
         self.conv2 = ConvBnReLU3D(16, 16)
 
-        self.conv3 = ConvBnReLU3D(16, 32, stride=2)
+        self.conv3 = ConvBnReLU3D(16, 32, stride=2) # [B, 32, D/4, H/16, W/16]
         self.conv4 = ConvBnReLU3D(32, 32)
 
-        self.conv5 = ConvBnReLU3D(32, 64, stride=2)
+        self.conv5 = ConvBnReLU3D(32, 64, stride=2) # [B, 64, D/8, H/32, W/32]
         self.conv6 = ConvBnReLU3D(64, 64)
 
         self.conv7 = nn.Sequential(
@@ -59,18 +67,22 @@ class CostRegNet(nn.Module):
         self.prob = nn.Conv3d(8, 1, 3, stride=1, padding=1)
 
     def forward(self, x):
-        conv0 = self.conv0(x)
-        conv2 = self.conv2(self.conv1(conv0))
-        conv4 = self.conv4(self.conv3(conv2))
-        x = self.conv6(self.conv5(conv4))
+        conv0 = self.conv0(x)                   # (B, 8, 192, 160, 128)
+        conv2 = self.conv2(self.conv1(conv0))   # (B, 16, 96, 80, 64)
+        conv4 = self.conv4(self.conv3(conv2))   # (B, 32, 48, 40, 32)
+        x = self.conv6(self.conv5(conv4))       # (B, 64, 24, 20, 16)
         x = conv4 + self.conv7(x)
         x = conv2 + self.conv9(x)
         x = conv0 + self.conv11(x)
         x = self.prob(x)
-        return x
+        return x            # (B, 1, 192, 160, 128)
 
 
 class RefineNet(nn.Module):
+    """
+    in: [B, 4, H/4, W/4] 4是因为img有三通道，depth有1通道
+    out: [B, 1, H/4, W/4] (B, 1, 160, 128)
+    """
     def __init__(self):
         super(RefineNet, self).__init__()
         self.conv1 = ConvBnReLU(4, 32)
@@ -79,8 +91,10 @@ class RefineNet(nn.Module):
         self.res = ConvBnReLU(32, 1)
 
     def forward(self, img, depth_init):
-        concat = F.cat((img, depth_init), dim=1)
-        depth_residual = self.res(self.conv3(self.conv2(self.conv1(concat))))
+        # concat = F.cat((img, depth_init), dim=1)
+        concat = torch.cat((F.interpolate(img, size=[128, 160]), depth_init.unsqueeze(1)), 1)
+
+        depth_residual = self.res(self.conv3(self.conv2(self.conv1(concat))))   # 原图和深度图拼起来通过网络得到剩余图
         depth_refined = depth_init + depth_residual
         return depth_refined
 
@@ -113,7 +127,7 @@ class MVSNet(nn.Module):
         # step 1. feature extraction
         # in: images; out: 32-channel feature maps
         features = [self.feature(img) for img in imgs]
-        ref_feature, src_features = features[0], features[1:]       # [B, 32, H/4, W/4]
+        ref_feature, src_features = features[0], features[1:]       # 每一个特征[B, 32, H/4, W/4]
     
         ref_proj, src_projs = proj_matrices[0], proj_matrices[1:]
 
@@ -139,24 +153,25 @@ class MVSNet(nn.Module):
         volume_variance = volume_sq_sum.div_(num_views).sub_(volume_sum.div_(num_views).pow_(2))  # @mark [B, 32, 192, H/4, W/4] 公式(2) 方差简化计算方法  \sum Vi^2 / N - (Vi_bar)^2
 
         # step 3. cost volume regularization
-        # @Q 正则化的意思是通过这个东西输入网络，输出更抽象的信息吗？
+        # @mark 这个cost网络本身是不改变维度的 只是去除噪声更加抽象，真正把32拍成1的是最后一个prob层(soft argmin)，最终的物理含义是 某一个pixel的某一个深度假设位置的概率值
         cost_reg = self.cost_regularization(volume_variance)        # [B, 1, 192, H/4, W/4]
         # cost_reg = F.upsample(cost_reg, [num_depth * 4, img_height, img_width], mode='trilinear')
         cost_reg = cost_reg.squeeze(1)              # [B, 192, H/4, W/4] squeeze删除所有维度为1的维度
         prob_volume = F.softmax(cost_reg, dim=1)    # [B, 192, H/4, W/4] 将深度维度的信息压缩为0～1之间的分布，得到概率体probability volume
-        depth = depth_regression(prob_volume, depth_values=depth_values)    # @Q 深度图是不是也下采样了四倍？ [B, H/4, W/4] 加权平均选择最优的深度
+        depth = depth_regression(prob_volume, depth_values=depth_values)    # 深度图也下采样了四倍 [B, H/4, W/4] 加权平均选择最优的深度 在深度维度做了加权
 
         with torch.no_grad():
-            # photometric confidence
-            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # 选取最优点周围的四个点累计概率体
-            depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # @Q 这里是不是应该对这四个点的概率体回归呀
-            photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)
+            # photometric confidence @Q 这个不是特别懂，但这几步不影响深度图
+            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # 选取最优点周围的四个点平均概率体
+            depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # 这次回归时的深度值是从零开始的整数，最终得到的是index
+            photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)     # [B, H/4, W/4]
+            print(photometric_confidence.shape)
 
         # step 4. depth map refinement
         if not self.refine:
             return {"depth": depth, "photometric_confidence": photometric_confidence}
         else:
-            refined_depth = self.refine_network(torch.cat((imgs[0], depth), 1))
+            refined_depth = self.refine_network(imgs[0], depth)
             return {"depth": depth, "refined_depth": refined_depth, "photometric_confidence": photometric_confidence}
 
 # @mark 公式(4)

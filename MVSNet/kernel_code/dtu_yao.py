@@ -69,6 +69,14 @@ class MVSDataset(Dataset):
         return np.array(read_pfm(filename)[0], dtype=np.float32)
 
     def __getitem__(self, idx):
+        """
+        Returns:
+            imgs: 1张ref + 2张src 组成的原图数组
+            proj_matrices: 三张图对应的投影矩阵
+            depth: ref对应的深度图ground truth
+            depth_values: ref的深度值假设数组 从425开始每隔2.5取一个数，一共192个
+            mask: 可靠点mask，mask=1的位置才会计算loss
+        """
         meta = self.metas[idx]
         scan, light_idx, ref_view, src_views = meta
         # use only the reference view and first nviews-1 source views
@@ -91,15 +99,13 @@ class MVSDataset(Dataset):
             imgs.append(self.read_img(img_filename))
             intrinsics, extrinsics, depth_min, depth_interval = self.read_cam_file(proj_mat_filename)
 
-
             # multiply intrinsics and extrinsics to get projection matrix
             proj_mat = extrinsics.copy()
-            proj_mat[:3, :4] = np.matmul(intrinsics, proj_mat[:3, :4]) # @mark 外参*内参得到投影矩阵
+            proj_mat[:3, :4] = np.matmul(intrinsics, proj_mat[:3, :4]) # @mark 外参*内参得到投影矩阵 这里补了一行方便后续计算
             proj_matrices.append(proj_mat)
 
             if i == 0:  # reference view
-                depth_values = np.arange(depth_min, depth_interval * self.ndepths + depth_min, depth_interval,
-                                         dtype=np.float32)
+                depth_values = np.arange(depth_min, depth_interval * self.ndepths + depth_min, depth_interval, dtype=np.float32)
                 mask = self.read_img(mask_filename)
                 depth = self.read_depth(depth_filename)
 
@@ -111,65 +117,3 @@ class MVSDataset(Dataset):
                 "depth": depth,
                 "depth_values": depth_values,
                 "mask": mask}
-
-
-if __name__ == "__main__":
-    # some testing code, just IGNORE it
-    dataset = MVSDataset("/home/doublez/Data/MVS/train/dtu/", '../lists/dtu/train.txt', 'train', 5)
-    item = dataset[50]
-
-    # dataset = MVSDataset("/home/doublez/Data/MVS/train/dtu/", '../lists/dtu/val.txt', 'val', 3,
-    #                      128)
-    # item = dataset[50]
-
-    # dataset = MVSDataset("/home/doublez/Data/MVS/train/dtu/", '../lists/dtu/test.txt', 'test', 5,
-    #                      128)
-    # item = dataset[50]
-
-    # test homography here
-    print(item.keys())
-    print("imgs", item["imgs"].shape)
-    print("depth", item["depth"].shape)
-    print("depth_values", item["depth_values"].shape)
-    print("mask", item["mask"].shape)
-    print("proj_metrice", item["proj_matrices"].shape)
-
-    ref_img = item["imgs"][0].transpose([1, 2, 0])[::4, ::4]        # (512,640,3) -下采样-> (128,160,3)
-    src_imgs = [item["imgs"][i].transpose([1, 2, 0])[::4, ::4] for i in range(1, 5)]
-    ref_proj_mat = item["proj_matrices"][0]
-    src_proj_mats = [item["proj_matrices"][i] for i in range(1, 5)]
-    mask = item["mask"]
-    depth = item["depth"]
-
-    height = ref_img.shape[0]
-    width = ref_img.shape[1]
-    xx, yy = np.meshgrid(np.arange(0, width), np.arange(0, height))
-    print("yy", yy.max(), yy.min())
-    yy = yy.reshape([-1])
-    xx = xx.reshape([-1])
-    X = np.vstack((xx, yy, np.ones_like(xx)))
-    D = depth.reshape([-1])
-    print("X", "D", X.shape, D.shape)
-
-    X = np.vstack((X * D, np.ones_like(xx)))
-    X = np.matmul(np.linalg.inv(ref_proj_mat), X)
-    X = np.matmul(src_proj_mats[0], X)
-    X /= X[2]
-    X = X[:2]
-
-    yy = X[0].reshape([height, width]).astype(np.float32)
-    xx = X[1].reshape([height, width]).astype(np.float32)
-
-    import matplotlib.pyplot as plt
-    # plt.imshow(np.hstack((yy, xx)), cmap='gray'), plt.show()
-
-    import cv2
-
-    warped = cv2.remap(src_imgs[0], yy, xx, interpolation=cv2.INTER_LINEAR) # 重映射 将src的像素值根据y和x指定的位置放到新图像中 dst[0,0] = src[y[0],x[0]]
-    warped[mask[:, :] < 0.5] = 0
-    plt.figure(), plt.imshow(mask), plt.show()
-
-
-    # cv2.imwrite('../tmp0.png', ref_img[:, :, ::-1] * 255)
-    # cv2.imwrite('../tmp1.png', warped[:, :, ::-1] * 255)
-    # cv2.imwrite('../tmp2.png', src_imgs[0][:, :, ::-1] * 255)
