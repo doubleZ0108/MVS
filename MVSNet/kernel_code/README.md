@@ -120,8 +120,8 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 - `read_cam_file()`: 相机外参、相机内参、最小深度(都为425)、深度假设间隔(都为2.5)
 - `getitem`: 取一组用来训练的数据
     - `imgs`: 1ref + 2src（都归一化到0-1） (3, 3, 512, 640) 3个3channel的512*640大小的图片
-    - `proj_metrices`: 3个4*4投影矩阵$\begin{bmatrix} R_{3,3} \ t_{3,1} \\ 0 \ 1 \end{bmatrix}$  (3, 4, 4)
-        - 这里是一个视点就有一个投影矩阵，因为MVSNet中所有的投影矩阵都是相对于一个基准视点的投影关系，所以如果想建立两个视点的关系，他们两个都有投影矩阵，可以大致理解为 $B = P_B^{-1}P_AA$
+    - `proj_metrices`: 3个4*4投影矩阵<img src="https://latex.codecogs.com/svg.image?\begin{bmatrix}&space;R_{3,3}&space;\&space;t_{3,1}&space;\\&space;0&space;\&space;1&space;\end{bmatrix}" title="\begin{bmatrix} R_{3,3} \ t_{3,1} \\ 0 \ 1 \end{bmatrix}" />  (3, 4, 4)
+        - 这里是一个视点就有一个投影矩阵，因为MVSNet中所有的投影矩阵都是相对于一个基准视点的投影关系，所以如果想建立两个视点的关系，他们两个都有投影矩阵，可以大致理解为 <img src="https://latex.codecogs.com/svg.image?B&space;=&space;P_B^{-1}P_AA" title="B = P_B^{-1}P_AA" />
         - 投影矩阵按理说应该是3*3的，这里在最后一行补了[0, 0, 0, 1]为了后续方便计算，所以这里投影矩阵维度是4*4
     - `depth`: ref的深度图 (128, 160)
     - `depth_values`: ref将来要假设的所有深度值 (从425开始每隔2.5取一个数，一共取192个)
@@ -281,7 +281,7 @@ def train_sample(sample, detailed_summary=False):
         return warped_src_fea
     ```
     
-- `depth_regression`: 深度回归，根据之前假设的192个深度经过网络算完得到的不同概率，乘以深度假设，求得期望（最后在深度假设维度做了加法，所以运算后深度假设这一维度就没了）这个期望即是最终估计的最优深度，对应论文中的公式（3）$D = \sum_{d=d_{min}}^{d_{max}} d \times P(d)$
+- `depth_regression`: 深度回归，根据之前假设的192个深度经过网络算完得到的不同概率，乘以深度假设，求得期望（最后在深度假设维度做了加法，所以运算后深度假设这一维度就没了）这个期望即是最终估计的最优深度，对应论文中的公式（3）<img src="https://latex.codecogs.com/svg.image?D&space;=&space;\sum_{d=d_{min}}^{d_{max}}&space;d&space;\times&space;P(d)" title="D = \sum_{d=d_{min}}^{d_{max}} d \times P(d)" />
 
 ### mvsnet.py
 
@@ -303,7 +303,7 @@ def train_sample(sample, detailed_summary=False):
         3. 通过特征提取网络之后，原始图像的3-channel变为32维的高位特征，并且图像尺寸缩减到原来的1/4
     2. **differential homograph**, build cost volume
         1. 将ref的32维特征和ref投影过来的高维特征累积构成原始cost volume
-        2. 通过公式(2) $C = \frac{\sum_{i=1}^N(V_i - \bar{V_i})^2}{N}$ 计算方差得到最后的cost volume(在实现里通过$\frac{\sum_{i=1}^N V_i^2}{N} - \bar{V_i}^2$公式简化计算)
+        2. 通过公式(2) <img src="https://latex.codecogs.com/svg.image?C&space;=&space;\frac{\sum_{i=1}^N(V_i&space;-&space;\bar{V_i})^2}{N}" title="C = \frac{\sum_{i=1}^N(V_i - \bar{V_i})^2}{N}" /> 计算方差得到最后的cost volume(在实现里通过<img src="https://latex.codecogs.com/svg.image?\frac{\sum_{i=1}^N&space;V_i^2}{N}&space;-&space;\bar{V_i}^2" title="\frac{\sum_{i=1}^N V_i^2}{N} - \bar{V_i}^2" />公式简化计算)
         3. 最终的cost volume维度是[B, 32, 192, H/4, W/4]
     3. **cost volume regularization**
         

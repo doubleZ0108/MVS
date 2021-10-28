@@ -106,7 +106,7 @@ multi-scale 3D CNN（这里有一些涉及网络细节的部分没做整理）
 
 改为在深度方向计算期望
 
-$$D = \sum_{dmin}^{dmax} d \times P(d)$$
+<img src="https://latex.codecogs.com/svg.image?D&space;=&space;\sum_{dmin}^{dmax}&space;d&space;\times&space;P(d)" title="D = \sum_{dmin}^{dmax} d \times P(d)" />
 
 **Probability Map**
 
