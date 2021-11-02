@@ -124,8 +124,7 @@ def train():
     # 动态调整学习率(后期逐渐减小)
     milestones = [int(epoch_idx) for epoch_idx in args.lrepochs.split(':')[0].split(',')]       # 几个需要下降学习率的epoch index
     lr_gamma = 1 / float(args.lrepochs.split(':')[1])
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones, gamma=lr_gamma,
-                                                        last_epoch=start_epoch - 1)
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones, gamma=lr_gamma, last_epoch=start_epoch - 1)
 
     for epoch_idx in range(start_epoch, args.epochs):
         print('Epoch {}:'.format(epoch_idx))
@@ -158,7 +157,6 @@ def train():
                 'optimizer': optimizer.state_dict()},
                 "{}/model_{:0>6}.ckpt".format(args.logdir, epoch_idx))
             torch.save(model, "mvsnet.pth")
-
 
 
         # testing

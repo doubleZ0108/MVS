@@ -4,8 +4,6 @@ MVSNet: Depth Inference for Unstructured Multi-view Stereo
 
 ECCV 2018
 
-[toc]
-
 -----
 
 ## 1 核心思路
@@ -88,7 +86,7 @@ ECCV 2018
 
 通过方差（分别减平均后的平方除总数）将所有feature volumns编码得到一个cost volumn
 
-❌所有视点对于匹配代价贡献相同
+所有视点对于匹配代价贡献相同
 
 **Cost Volumn Regularization**
 
@@ -108,7 +106,7 @@ multi-scale 3D CNN（这里有一些涉及网络细节的部分没做整理）
 
 改为在深度方向计算期望
 
-$$D = \sum_{dmin}^{dmax} d \times P(d)$$
+<img src="https://latex.codecogs.com/svg.image?D&space;=&space;\sum_{dmin}^{dmax}&space;d&space;\times&space;P(d)" title="D = \sum_{dmin}^{dmax} d \times P(d)" />
 
 **Probability Map**
 
