@@ -165,7 +165,6 @@ class MVSNet(nn.Module):
             prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # 选取最优点周围的四个点平均概率体
             depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # 这次回归时的深度值是从零开始的整数，最终得到的是index
             photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)     # [B, H/4, W/4]
-            print(photometric_confidence.shape)
 
         # step 4. depth map refinement
         if not self.refine:

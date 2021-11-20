@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-DTU_TESTING="/home/doublez/Data/MVS/test/dtu/"
+DTU_TESTING="/media/public/yan1/doublez/realdoubleZ/Data/MVS/test/dtu"
 CKPT_FILE="./checkpoints/d192/model_000014.ckpt"
-python eval.py \
+CUDA_VISIBLE_DEVICES=2 python eval.py \
     --dataset=dtu_yao_eval \
     --batch_size=1 \
     --testpath=$DTU_TESTING \

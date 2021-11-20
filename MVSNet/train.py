@@ -60,8 +60,8 @@ if args.resume:
 if args.testpath is None:
     args.testpath = args.trainpath
 
-torch.cuda.set_per_process_memory_fraction(0.8, 0)
-torch.cuda.empty_cache()
+# torch.cuda.set_per_process_memory_fraction(0.8, 0)
+# torch.cuda.empty_cache()
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 #endregion
