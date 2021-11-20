@@ -35,3 +35,25 @@
 - highlight ref图像的贡献，构建pixel-wise match confidence volume
     - 特征提取的时候对ref图多一个步骤，分辨率也保留的更高
 - 把pixel-wise → 聚合为patch-wise
+- 3D正则化采用了各向同性和各向异性的混合模式
+- 对特征的提取开始出现分级的思想
+- [ ] @作者 更高精度的数据集，内存消耗和计算复杂度降低，融合语义信息
+- [ ] @doubleZ 个人感觉这篇跟MVSNet大体框架极为相似，而且有意回避MVSNet的做法，并且不提供源码，把网络结构这些画出来占论文空间
+
+## CVP-MVSNet
+
+- 金字塔的思想：特征提取金字塔构建，cost volume pyramid
+- coarse-to-fine的思想 ← relation between depth residual search range and image resolution
+- [ ]  不是end-to-end的方法，需要先用其他方法生成深度图
+- [ ]  消融实验做的不是很多
+- [ ]  处理的图像分辨率太小160*128，而且金字塔也只设置了两层，核心还是图片尺寸太小
+- [ ]  @作者 未来希望把工作集成进learning-based structure-from-motion框架
+
+## AttMVSNet
+
+- attention-enhanced matching confidence volume 综合光度一致性和局部场景上下文信息
+- attention-guided regularization 层次化的聚合和正则化MCV方法
+- loss不仅有深度图像素维度的一致性，还有深度图梯度维度的一致性
+- 使用了ZNCC等进行了深度图GT的“滤波”，让真值更可靠
+- [ ]  没有消融实验
+- [ ]  深度假设自适应
