@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/media/public/yan1/doublez/realdoubleZ/Developer/MVS/fusibile",
+  "command": "/usr/bin/c++   -I/media/public/yan1/doublez/realdoubleZ/Developer/MVS/fusibile/. -I/usr/local/cuda/include -isystem /usr/local/include -isystem /usr/local/include/opencv   -fopenmp   -std=c++11 -Wall -Wextra -pedantic -Wno-unused-function -o CMakeFiles/fusibile.dir/main.cpp.o -c /media/public/yan1/doublez/realdoubleZ/Developer/MVS/fusibile/main.cpp",
+  "file": "/media/public/yan1/doublez/realdoubleZ/Developer/MVS/fusibile/main.cpp"
+}
+]
