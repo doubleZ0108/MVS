@@ -156,7 +156,7 @@ def train():
                 'model': model.state_dict(),
                 'optimizer': optimizer.state_dict()},
                 "{}/model_{:0>6}.ckpt".format(args.logdir, epoch_idx))
-            torch.save(model, "mvsnet.pth")
+            # torch.save(model, "mvsnet.pth")
 
 
         # testing
