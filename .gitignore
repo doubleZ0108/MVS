@@ -2,6 +2,12 @@
 .vscode/
 .idea/
 __pycache__
-MVSNet/checkpoints/d192/events.out.tfevents.*
-fusibile/CMakeFiles/
+
 doublez-*.ipynb
+
+# MVSNet
+MVSNet/outputs/
+MVSNet/checkpoints/*
+
+# fusibile
+fusibile/CMakeFiles/
