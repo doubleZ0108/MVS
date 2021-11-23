@@ -19,6 +19,7 @@ import cv2
 from plyfile import PlyData, PlyElement
 from PIL import Image
 
+# region parameter paraser
 cudnn.benchmark = True
 
 parser = argparse.ArgumentParser(description='Predict depth, filter, and fuse. May be different from the original implementation')
@@ -41,7 +42,9 @@ args = parser.parse_args()
 print("argv:", sys.argv[1:])
 print_args(args)
 
+# endregion
 
+# region 读取相机参数、图片、mask、构建ref和src对（跟MVSDataset中相关函数一样）
 # read intrinsics and extrinsics
 def read_camera_parameters(filename):
     with open(filename) as f:
@@ -75,7 +78,6 @@ def save_mask(filename, mask):
     mask = mask.astype(np.uint8) * 255
     Image.fromarray(mask).save(filename)
 
-
 # read a pair file, [(ref_view1, [src_view1-1, ...]), (ref_view2, [src_view2-1, ...]), ...]
 def read_pair_file(filename):
     data = []
@@ -88,6 +90,7 @@ def read_pair_file(filename):
             data.append((ref_view, src_views))
     return data
 
+# endregion
 
 # run MVS model to save depth maps and confidence maps
 def save_depth():
@@ -107,7 +110,7 @@ def save_depth():
     model.load_state_dict(state_dict['model'])
     model.eval()
 
-    with torch.no_grad():
+    with torch.no_grad():   # 记得test的时候关闭关闭梯度反传
         for batch_idx, sample in enumerate(TestImgLoader):
             sample_cuda = tocuda(sample)
             outputs = model(sample_cuda["imgs"], sample_cuda["proj_matrices"], sample_cuda["depth_values"])
@@ -117,8 +120,7 @@ def save_depth():
             filenames = sample["filename"]
 
             # save depth maps and confidence maps
-            for filename, depth_est, photometric_confidence in zip(filenames, outputs["depth"],
-                                                                   outputs["photometric_confidence"]):
+            for filename, depth_est, photometric_confidence in zip(filenames, outputs["depth"], outputs["photometric_confidence"]):
                 depth_filename = os.path.join(args.outdir, filename.format('depth_est', '.pfm'))
                 confidence_filename = os.path.join(args.outdir, filename.format('confidence', '.pfm'))
                 os.makedirs(depth_filename.rsplit('/', 1)[0], exist_ok=True)

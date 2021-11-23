@@ -5,7 +5,7 @@ from PIL import Image
 from datasets.data_io import *
 
 
-# the DTU dataset preprocessed by Yao Yao (only for training)
+# the DTU dataset preprocessed by Yao Yao (only for testing)
 class MVSDataset(Dataset):
     def __init__(self, datapath, listfile, mode, nviews, ndepths=192, interval_scale=1.06, **kwargs):
         super(MVSDataset, self).__init__()
@@ -32,6 +32,7 @@ class MVSDataset(Dataset):
             with open(os.path.join(self.datapath, pair_file)) as f:
                 num_viewpoint = int(f.readline())
                 # viewpoints (49)
+                # 与train相比不考虑光照变化
                 for view_idx in range(num_viewpoint):
                     ref_view = int(f.readline().rstrip())
                     src_views = [int(x) for x in f.readline().rstrip().split()[1::2]]
@@ -50,7 +51,7 @@ class MVSDataset(Dataset):
         extrinsics = np.fromstring(' '.join(lines[1:5]), dtype=np.float32, sep=' ').reshape((4, 4))
         # intrinsics: line [7-10), 3x3 matrix
         intrinsics = np.fromstring(' '.join(lines[7:10]), dtype=np.float32, sep=' ').reshape((3, 3))
-        intrinsics[:2, :] /= 4
+        intrinsics[:2, :] /= 4      # @mark 内参除4(图像下下采样4倍，最终的深度图也下采样4倍)
         # depth_min & depth_interval: line 11
         depth_min = float(lines[11].split()[0])
         depth_interval = float(lines[11].split()[1]) * self.interval_scale
@@ -61,7 +62,7 @@ class MVSDataset(Dataset):
         # scale 0~255 to 0~1
         np_img = np.array(img, dtype=np.float32) / 255.
         assert np_img.shape[:2] == (1200, 1600)
-        # crop to (1184, 1600)
+        # crop to (1184, 1600) @mark 裁掉了下面的16个像素
         np_img = np_img[:-16, :]  # do not need to modify intrinsics if cropping the bottom part
         return np_img
 
@@ -94,10 +95,11 @@ class MVSDataset(Dataset):
             proj_matrices.append(proj_mat)
 
             if i == 0:  # reference view
+                # @Q 猜想这里的 -0.5 是因为内参下采样了4倍？ 不过depth_values与train完全一致 没有任何区别
                 depth_values = np.arange(depth_min, depth_interval * (self.ndepths - 0.5) + depth_min, depth_interval,
                                          dtype=np.float32)
 
-        imgs = np.stack(imgs).transpose([0, 3, 1, 2])
+        imgs = np.stack(imgs).transpose([0, 3, 1, 2])   # (5, 3, 1184, 1600)
         proj_matrices = np.stack(proj_matrices)
 
         return {"imgs": imgs,
