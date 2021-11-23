@@ -4,3 +4,4 @@
 __pycache__
 MVSNet/checkpoints/d192/events.out.tfevents.*
 fusibile/CMakeFiles/
+doublez-*.ipynb
