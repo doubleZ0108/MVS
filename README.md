@@ -3,6 +3,8 @@
 
 ## 论文列表
 
+[MVS系列核心创新点 & 缺陷](https://github.com/doubleZ0108/MVS/blob/master/paper-summary.md)
+
 |      | 简称/笔记    | 论文题目      | 出处(年份)     | 原文<br />代码                    | 推荐值                 |
 | :--: | :-------------------: | ------------------ | -------------- | ---------- | :----: |
 | 1    | [MVSNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/MVSNet.md) | MVSNet: Depth Inference for Unstructured Multi-view Stereo   | ECCV 2018      | [paper](https://openaccess.thecvf.com/content_ECCV_2018/html/Yao_Yao_MVSNet_Depth_Inference_ECCV_2018_paper.html)<br /> [code](https://github.com/YoYo000/MVSNet) | ★★★★★ |
@@ -16,6 +18,7 @@
 |      |              | Cost Volume Pyramid Based Depth Inference for Multi-View Stereo | CVPR 2020 oral | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Yang_Cost_Volume_Pyramid_Based_Depth_Inference_for_Multi-View_Stereo_CVPR_2020_paper.html)<br />[code](https://github.com/JiayuYANG/CVP-MVSNet) |  |
 |      |              | PatchmatchNet: Learned Multi-View Patchmatch Stereo          | CVPR 2021oral  | [paper](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_PatchmatchNet_Learned_Multi-View_Patchmatch_Stereo_CVPR_2021_paper.html)<br />[code](https://github.com/FangjinhuaWang/PatchmatchNet) |  |
 
-## 代码/实现项目
+## 代码/项目
 
 - [MVSNet](https://github.com/doubleZ0108/MVS/tree/master/MVSNet) | [代码精读笔记](https://github.com/doubleZ0108/MVS/tree/master/MVSNet)
+- [fusibile深度图融合点云](https://github.com/doubleZ0108/MVS/tree/master/fusibile)
