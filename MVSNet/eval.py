@@ -132,7 +132,18 @@ def save_depth():
 
 
 # project the reference point cloud into the source view, then project back
+# @Q 知道是干嘛的 但完全看不懂代码
 def reproject_with_depth(depth_ref, intrinsics_ref, extrinsics_ref, depth_src, intrinsics_src, extrinsics_src):
+    """
+    Args:
+        depth_ref: (128, 160) numpy
+        intrinsics_ref: (3, 3) numpy
+        extrinsics_ref: (4, 4) numpy
+    Returns: 
+        depth_reprojected: (128, 160) numpy
+        x_reprojected: (128, 160) typle
+        x_src: (128, 160) numpy
+    """
     width, height = depth_ref.shape[1], depth_ref.shape[0]
     ## step1. project reference pixels to the source view
     # reference view x, y
@@ -173,6 +184,13 @@ def reproject_with_depth(depth_ref, intrinsics_ref, extrinsics_ref, depth_src, i
 
 
 def check_geometric_consistency(depth_ref, intrinsics_ref, extrinsics_ref, depth_src, intrinsics_src, extrinsics_src):
+    """
+    Returns:
+        mask: 通过几何检验的mask图
+        depth_reprojected: 重投影后的深度图
+        x2d_src： ref这些像素在src上的坐标
+        y2d_src： ref这些像素在src上的坐标
+    """
     width, height = depth_ref.shape[1], depth_ref.shape[0]
     x_ref, y_ref = np.meshgrid(np.arange(0, width), np.arange(0, height))
     depth_reprojected, x2d_reprojected, y2d_reprojected, x2d_src, y2d_src = reproject_with_depth(depth_ref, intrinsics_ref, extrinsics_ref,
@@ -184,6 +202,7 @@ def check_geometric_consistency(depth_ref, intrinsics_ref, extrinsics_ref, depth
     depth_diff = np.abs(depth_reprojected - depth_ref)
     relative_depth_diff = depth_diff / depth_ref
 
+    # @mark 重投影像素偏移<1 && 重投影深度差<1% 通过校验
     mask = np.logical_and(dist < 1, relative_depth_diff < 0.01)
     depth_reprojected[~mask] = 0
 
@@ -204,7 +223,7 @@ def filter_depth(scan_folder, out_folder, plyfilename):
 
     # for each reference view and the corresponding source views
     for ref_view, src_views in pair_data:
-        # load the camera parameters
+        # load the camera parameters of ref
         ref_intrinsics, ref_extrinsics = read_camera_parameters(
             os.path.join(scan_folder, 'cams/{:0>8}_cam.txt'.format(ref_view)))
         # load the reference image
@@ -230,19 +249,19 @@ def filter_depth(scan_folder, out_folder, plyfilename):
             src_depth_est = read_pfm(os.path.join(out_folder, 'depth_est/{:0>8}.pfm'.format(src_view)))[0]
 
             geo_mask, depth_reprojected, x2d_src, y2d_src = check_geometric_consistency(ref_depth_est, ref_intrinsics, ref_extrinsics,
-                                                                      src_depth_est,
-                                                                      src_intrinsics, src_extrinsics)
+                                                                      src_depth_est, src_intrinsics, src_extrinsics)
             geo_mask_sum += geo_mask.astype(np.int32)
             all_srcview_depth_ests.append(depth_reprojected)
             all_srcview_x.append(x2d_src)
             all_srcview_y.append(y2d_src)
             all_srcview_geomask.append(geo_mask)
 
+        # @mark 将通过src重投影后的深度图和ref原本算出来的深度图取平均
         depth_est_averaged = (sum(all_srcview_depth_ests) + ref_depth_est) / (geo_mask_sum + 1)
-        # at least 3 source views matched
+        # @mark 至少要满足3个src的几何一致性 at least 3 source views matched
         geo_mask = geo_mask_sum >= 3
         final_mask = np.logical_and(photo_mask, geo_mask)
-
+        
         os.makedirs(os.path.join(out_folder, "mask"), exist_ok=True)
         save_mask(os.path.join(out_folder, "mask/{:0>8}_photo.png".format(ref_view)), photo_mask)
         save_mask(os.path.join(out_folder, "mask/{:0>8}_geo.png".format(ref_view)), geo_mask)
@@ -259,8 +278,15 @@ def filter_depth(scan_folder, out_folder, plyfilename):
             cv2.imshow('ref_depth * photo_mask', ref_depth_est * photo_mask.astype(np.float32) / 800)
             cv2.imshow('ref_depth * geo_mask', ref_depth_est * geo_mask.astype(np.float32) / 800)
             cv2.imshow('ref_depth * mask', ref_depth_est * final_mask.astype(np.float32) / 800)
+
+            cv2.imwrite('ref_img.png', ref_img[:, :, ::-1])
+            cv2.imwrite('ref_depth.png', ref_depth_est / 800)
+            cv2.imwrite('ref_depth_photo_mask.png', ref_depth_est * photo_mask.astype(np.float32) / 800)
+            cv2.imwrite('ref_depth_geo_mask.png', ref_depth_est * geo_mask.astype(np.float32) / 800)
+            cv2.imwrite('ref_depth_mask.png', ref_depth_est * final_mask.astype(np.float32) / 800)
             cv2.waitKey(0)
 
+        # filter每张ref的x y depth，并赋予颜色
         height, width = depth_est_averaged.shape[:2]
         x, y = np.meshgrid(np.arange(0, width), np.arange(0, height))
         # valid_points = np.logical_and(final_mask, ~used_mask[ref_view])
@@ -283,6 +309,7 @@ def filter_depth(scan_folder, out_folder, plyfilename):
         #     src_x = all_srcview_x[idx].astype(np.int)
         #     used_mask[src_view][src_y[src_mask], src_x[src_mask]] = True
 
+    # 融合生成最终的点云
     vertexs = np.concatenate(vertexs, axis=0)
     vertex_colors = np.concatenate(vertex_colors, axis=0)
     vertexs = np.array([tuple(v) for v in vertexs], dtype=[('x', 'f4'), ('y', 'f4'), ('z', 'f4')])

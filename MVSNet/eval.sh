@@ -11,4 +11,5 @@ CUDA_VISIBLE_DEVICES=7 python eval.py \
     --batch_size=1 \
     --testpath=$DTU_TESTING \
     --testlist lists/dtu/mytest.txt \
+    --display \
     --loadckpt $CKPT_FILE $@

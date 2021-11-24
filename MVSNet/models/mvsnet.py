@@ -175,9 +175,9 @@ class MVSNet(nn.Module):
 
         with torch.no_grad():
             # photometric confidence @Q 这个不是特别懂，但这几步不影响深度图
-            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # [B, 192, H/4, W/4] 选取最优点周围的四个点平均概率体
-            depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # 这次回归时的深度值是从零开始的整数，最终得到的是index
-            photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)     # [B, H/4, W/4]
+            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # [B, 192, H/4, W/4] 选取最优点周围的四个点平均概率体 最终的尺寸跟概率体是一样的 只不过没处是平均了周围的信息
+            depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # [B, H/4, W/4] 这次回归时的深度值是从零开始的整数，最终得到的是index
+            photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)     # [B, H/4, W/4] 从192个深度假设层中获取index对应位置的数据 跟深度图的尺寸是一样的 每点保存的是置信度
 
         # step 4. depth map refinement
         if not self.refine:
