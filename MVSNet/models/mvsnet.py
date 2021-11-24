@@ -21,26 +21,26 @@ class FeatureNet(nn.Module):
         self.conv4 = ConvBnReLU(16, 16, 3, 1, 1)
 
         # 模拟降维中丢掉的信息是回不来的
-        # self.conv3_ = ConvBnReLU(16, 16, 5, 2, 2)   # (16, H/4, W/4)
-        # self.conv4_ = nn.Sequential(                # (16, H/2, W/2)
-        #     nn.ConvTranspose2d(16, 16, kernel_size=3, padding=1, output_padding=1, stride=2, bias=False),
-        #     nn.BatchNorm2d(16),
-        #     nn.ReLU(inplace=True))
+        self.conv3_ = ConvBnReLU(16, 16, 5, 2, 2)   # (16, H/4, W/4)
+        self.conv4_ = nn.Sequential(                # (16, H/2, W/2)
+            nn.ConvTranspose2d(16, 16, kernel_size=3, padding=1, output_padding=1, stride=2, bias=False),
+            nn.BatchNorm2d(16),
+            nn.ReLU(inplace=True))
 
         self.conv5 = ConvBnReLU(16, 32, 5, 2, 2)    # (32, H/4, W/4)
         self.conv6 = ConvBnReLU(32, 32, 3, 1, 1)
 
-        # self.conv5_ = ConvBnReLU(16, 32, 3, 1, 1)   # (32, H/2, W/2)
-        # self.conv6_ = ConvBnReLU(32, 32, 5, 2, 2)   # (32, H/4, W/4)
+        self.conv5_ = ConvBnReLU(16, 32, 3, 1, 1)   # (32, H/2, W/2)
+        self.conv6_ = ConvBnReLU(32, 32, 5, 2, 2)   # (32, H/4, W/4)
 
         self.feature = nn.Conv2d(32, 32, 3, 1, 1)
 
     def forward(self, x):
         x = self.conv1(self.conv0(x))
-        # x = self.conv4_(self.conv3_(self.conv2(x)))
-        # x = self.feature(self.conv6_(self.conv5_(x)))
-        x = self.conv4(self.conv3(self.conv2(x)))
-        x = self.feature(self.conv6(self.conv5(x)))
+        x = self.conv4_(self.conv3_(self.conv2(x)))
+        x = self.feature(self.conv6_(self.conv5_(x)))
+        # x = self.conv4(self.conv3(self.conv2(x)))
+        # x = self.feature(self.conv6(self.conv5(x)))
         return x    # (32, 160, 128)
 
 
@@ -175,7 +175,7 @@ class MVSNet(nn.Module):
 
         with torch.no_grad():
             # photometric confidence @Q 这个不是特别懂，但这几步不影响深度图
-            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # 选取最优点周围的四个点平均概率体
+            prob_volume_sum4 = 4 * F.avg_pool3d(F.pad(prob_volume.unsqueeze(1), pad=(0, 0, 0, 0, 1, 2)), (4, 1, 1), stride=1, padding=0).squeeze(1)     # [B, 192, H/4, W/4] 选取最优点周围的四个点平均概率体
             depth_index = depth_regression(prob_volume, depth_values=torch.arange(num_depth, device=prob_volume.device, dtype=torch.float)).long()      # 这次回归时的深度值是从零开始的整数，最终得到的是index
             photometric_confidence = torch.gather(prob_volume_sum4, 1, depth_index.unsqueeze(1)).squeeze(1)     # [B, H/4, W/4]
 

@@ -11,3 +11,5 @@ MVSNet/checkpoints/*
 
 # fusibile
 fusibile/CMakeFiles/
+fusibile/CMakeCache.txt
+fusibile/fusibile

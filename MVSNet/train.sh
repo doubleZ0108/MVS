@@ -12,4 +12,4 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4 python train.py \
     --testlist lists/dtu/test.txt \
     --numdepth=192 \
     --resume \
-    --logdir ./checkpoints/baseline $@
+    --logdir ./checkpoints/test1122 $@
