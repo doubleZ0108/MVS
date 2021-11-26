@@ -1,0 +1,1 @@
+tensorboard --logdir outputs/exp/ --port 22060
