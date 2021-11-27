@@ -21,26 +21,26 @@ class FeatureNet(nn.Module):
         self.conv4 = ConvBnReLU(16, 16, 3, 1, 1)
 
         # 模拟降维中丢掉的信息是回不来的
-        self.conv3_ = ConvBnReLU(16, 16, 5, 2, 2)   # (16, H/4, W/4)
-        self.conv4_ = nn.Sequential(                # (16, H/2, W/2)
-            nn.ConvTranspose2d(16, 16, kernel_size=3, padding=1, output_padding=1, stride=2, bias=False),
-            nn.BatchNorm2d(16),
-            nn.ReLU(inplace=True))
+        # self.conv3_ = ConvBnReLU(16, 16, 5, 2, 2)   # (16, H/4, W/4)
+        # self.conv4_ = nn.Sequential(                # (16, H/2, W/2)
+        #     nn.ConvTranspose2d(16, 16, kernel_size=3, padding=1, output_padding=1, stride=2, bias=False),
+        #     nn.BatchNorm2d(16),
+        #     nn.ReLU(inplace=True))
 
         self.conv5 = ConvBnReLU(16, 32, 5, 2, 2)    # (32, H/4, W/4)
         self.conv6 = ConvBnReLU(32, 32, 3, 1, 1)
 
-        self.conv5_ = ConvBnReLU(16, 32, 3, 1, 1)   # (32, H/2, W/2)
-        self.conv6_ = ConvBnReLU(32, 32, 5, 2, 2)   # (32, H/4, W/4)
+        # self.conv5_ = ConvBnReLU(16, 32, 3, 1, 1)   # (32, H/2, W/2)
+        # self.conv6_ = ConvBnReLU(32, 32, 5, 2, 2)   # (32, H/4, W/4)
 
         self.feature = nn.Conv2d(32, 32, 3, 1, 1)
 
     def forward(self, x):
         x = self.conv1(self.conv0(x))
-        x = self.conv4_(self.conv3_(self.conv2(x)))
-        x = self.feature(self.conv6_(self.conv5_(x)))
-        # x = self.conv4(self.conv3(self.conv2(x)))
-        # x = self.feature(self.conv6(self.conv5(x)))
+        # x = self.conv4_(self.conv3_(self.conv2(x)))
+        # x = self.feature(self.conv6_(self.conv5_(x)))
+        x = self.conv4(self.conv3(self.conv2(x)))
+        x = self.feature(self.conv6(self.conv5(x)))
         return x    # (32, 160, 128)
 
 

@@ -196,16 +196,16 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval_folder', type=str,
-                        default='/home/rayc/Projects/PointMVSNet/data/dtu/Eval/')
-    parser.add_argument('--fusibile_exe_path', type=str, default='/home/rayc/Projects/new_fusible/fusibile/fusibile')
+                        default='/media/public/yan1/doublez/realdoubleZ/Data/MVS/train/dtu/Eval/')
+    parser.add_argument('--fusibile_exe_path', type=str, default='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/fusibile/build/fusibile')
     parser.add_argument('--init_prob_threshold', type=float, default=0.2)
     parser.add_argument('--flow_prob_threshold', type=float, default=0.1)
     parser.add_argument('--disp_threshold', type=float, default=0.12)
     parser.add_argument('--num_consistent', type=int, default=3)
     parser.add_argument("-v", '--view_num', type=int, default=49)
-    parser.add_argument("-n", '--name', type=str)
+    parser.add_argument("-n", '--name', type=str, default="flow3")
     parser.add_argument("-m", '--inter_mode', type=str, default='LANCZOS4')
-    parser.add_argument("-f", '--depth_folder', type=str)
+    parser.add_argument("-f", '--depth_folder', type=str, default="")
     args = parser.parse_args()
 
     eval_folder = args.eval_folder
@@ -235,9 +235,10 @@ if __name__ == '__main__':
                                             disp_threshold, num_consistent))
     mkdir(out_point_folder)
 
-    scene_list = ["scan1", "scan4", "scan9", "scan10", "scan11", "scan12", "scan13", "scan15", "scan23",
-                  "scan24", "scan29", "scan32", "scan33", "scan34", "scan48", "scan49", "scan62", "scan75",
-                  "scan77", "scan110", "scan114", "scan118"]
+    # scene_list = ["scan1", "scan4", "scan9", "scan10", "scan11", "scan12", "scan13", "scan15", "scan23",
+    #               "scan24", "scan29", "scan32", "scan33", "scan34", "scan48", "scan49", "scan62", "scan75",
+    #               "scan77", "scan110", "scan114", "scan118"]
+    scene_list = ["scan1"]
 
     for scene in scene_list:
         scene_folder = osp.join(eval_folder, DEPTH_FOLDER, scene)
@@ -261,8 +262,9 @@ if __name__ == '__main__':
         print('Run depth map fusion & filter')
         depth_map_fusion(point_folder, fusibile_exe_path, disp_threshold, num_consistent)
 
-        rename_cmd = "cp " + point_folder + "/final3d_model.ply {}/{}_ip{}_fp{}_d{}_nc{}_{}.ply".format(
+        rename_cmd = "cp " + point_folder + "{}/{}_ip{}_fp{}_d{}_nc{}_{}.ply /final3d_model.ply".format(
             point_folder, scene, init_prob_threshold, flow_prob_threshold, disp_threshold, num_consistent,
             args.inter_mode
         )
         os.system(rename_cmd)
+        print("finish")

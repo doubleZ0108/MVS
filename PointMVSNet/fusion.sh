@@ -1,0 +1,1 @@
+python depthfusion.py  --depth_folder="/media/public/yan1/doublez/realdoubleZ/Developer/MVS/PointMVSNet/scan1"
