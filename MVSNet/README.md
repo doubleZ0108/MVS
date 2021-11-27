@@ -1,6 +1,5 @@
 # MVSNet PyTorch代码精读
 
-
 MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch Implementation of MVSNet](https://github.com/xy-guo/MVSNet_pytorch)
 
 ## 1 总体结构
@@ -32,7 +31,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 - val: 18个
 - test: 22个
 
-### 2.1 Train
+### Train
 
 【Cameras】
 
@@ -73,7 +72,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
 - 命名：`rect_[view]_[light]_r5000.png`
 - 图片尺寸：640*512
 
-### 2.2 Test
+### Test
 
 共有22个基准测试场景，对于每一个scan文件夹
 
@@ -105,8 +104,8 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
     - `nviews`: 多视点总数(实现中取3=1ref+2src)
     - `ndepths`: 深度假设数(默认假设192种不同的深度)
     - `interval_scale`: 深度间隔缩放因子(数据集文件中定义了深度采样间隔是2.5，再把这个值乘以缩放因子，最终每隔2.5*1.06取一个不同的深度假设)
-- `build_list()`: 构建训练样本条目，最终的`meta`数组中够用27097条数据，每个元素如下：
-    
+- `build_list()`: 构建训练样本条目，最终的`meta`数组中共用27097条数据，每个元素如下：
+  
     ```python
     # scan   light_idx      ref_view          src_view
     # 场景    光照(0~6)  中心视点(估计它的深度)    参考视点
@@ -116,17 +115,34 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
     - 79个不同的scan
     - 7种不同的光照
     - 每个scan有49个不同的中心视点
-- `read_img`: 将图像归一化到0～1(神经网络训练常用技巧，激活函数的取值范围大都是0～1，便于高效计算)
+- `read_img()`: 将图像归一化到0～1(神经网络训练常用技巧，激活函数的取值范围大都是0～1，便于高效计算)
 - `read_cam_file()`: 相机外参、相机内参、最小深度(都为425)、深度假设间隔(都为2.5)
-- `getitem`: 取一组用来训练的数据
+- `getitem()`: 取一组用来训练的数据
     - `imgs`: 1ref + 2src（都归一化到0-1） (3, 3, 512, 640) 3个3channel的512*640大小的图片
-    - `proj_metrices`: 3个4*4投影矩阵<img src="https://latex.codecogs.com/svg.image?\begin{bmatrix}&space;R_{3,3}&space;\&space;t_{3,1}&space;\\&space;0&space;\&space;1&space;\end{bmatrix}" title="\begin{bmatrix} R_{3,3} \ t_{3,1} \\ 0 \ 1 \end{bmatrix}" />  (3, 4, 4)
-        - 这里是一个视点就有一个投影矩阵，因为MVSNet中所有的投影矩阵都是相对于一个基准视点的投影关系，所以如果想建立两个视点的关系，他们两个都有投影矩阵，可以大致理解为 <img src="https://latex.codecogs.com/svg.image?B&space;=&space;P_B^{-1}P_AA" title="B = P_B^{-1}P_AA" />
+    - `proj_metrices`: 3个4*4投影矩阵$\begin{bmatrix} R_{3,3} \ t_{3,1} \\ 0 \ 1 \end{bmatrix}$  (3, 4, 4)
+        - 这里是一个视点就有一个投影矩阵，因为MVSNet中所有的投影矩阵都是相对于一个基准视点的投影关系，所以如果想建立两个视点的关系，他们两个都有投影矩阵，可以大致理解为 $B = P_B^{-1}P_AA$
         - 投影矩阵按理说应该是3*3的，这里在最后一行补了[0, 0, 0, 1]为了后续方便计算，所以这里投影矩阵维度是4*4
     - `depth`: ref的深度图 (128, 160)
     - `depth_values`: ref将来要假设的所有深度值 (从425开始每隔2.5取一个数，一共取192个)
         - 2.5还要乘以深度间隔缩放因子
     - `mask`: ref深度图的mask(0-1二值图)，用来选取真值可靠的点 (128, 160)
+
+### dtu_yao_eval.py/MVSDataset
+
+- 参数与训练时完全一致
+- `build_list`: 构建视点匹配列表，最终meta长度为1078，每个元素如下，与train相比没有光照变化
+  
+    ```python
+    ('scan1', 0, [10, 1, 9, 12, 11, 13, 2, 8, 14, 27])
+    ```
+    
+- `read_cam_file()`: 内参除4，最终生成的深度图也下采样4倍
+- `read_img()`: 裁掉下方的16个像素，图像尺寸变为1184*1600，裁剪后不需要修改内存
+- `getitem()`:
+    - `imgs`: (5, 3, 1184, 1600) 测试的时候有5张图像，读的时候每张被裁剪掉了下面16像素
+    - `proj_metrics`: 5个投影矩阵，注意内参除了4倍
+    - `depth_values`: 深度假设范围，仍然是从425开始每隔2.5取一个数，一共192个
+    - `filename`: ref所在的文件夹名，如`scan1/`
 
 ### train.py
 
@@ -176,7 +192,7 @@ MVSNet PyTorch实现版本(非官方): [GitHub - xy-guo/MVSNet_pytorch: PyTorch 
             2. train_sample()
             3. 输出训练中的信息(loss和图像信息)
         2. 每个epoch训练完保存模型
-        3. 每轮模型训练完进行测试
+        3. 每轮模型训练完进行测试(这里的测试应该理解为validation，因为用到了7种不同的光照，真正测试是eval，那时候只有一种光照)
             1. `DictAverageMeter()` 主要存储loss那些信息，方便计算均值输出到fulltest
             2. test_sample()
 
@@ -228,14 +244,56 @@ def train_sample(sample, detailed_summary=False):
 
 对于训练某个数据的输出如下：deptp_est, depth_gt, errormap, mask, ref_img即对应该函数的输出
 
-![image.png](https://upload-images.jianshu.io/upload_images/12014150-1d0ff9fd04c33a39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<img src="https://upload-images.jianshu.io/upload_images/12014150-1d0ff9fd04c33a39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" width="67%;" />
+
+### eval.py
+
+- 相机参数读取是内参intrinsics要除4
+- 测试时参考图像用了5个视点
+1. 生成所有测试图片的深度图和confidence图
+2. 通过光度一致性和几何一致性优化深度图
+
+`save_depth()`: 通过MVSNet进行test生成深度图的核心步骤
+
+- 首先构建MVSDataset和Loader
+- 对于每一条训练数据通过模型
+    - 输入：1ref + 4src，每个视点的投影矩阵，深度假设list
+    - 输出：深度图，photometric confidence
+        - 深度图里的数据都是668.08545, 559.7229这类的真实物理距离(不满足像素的取值所以在mac上直接看是一片空白的)
+        - 置信度里的数据是0～1之间的小数
+- 将模型输出的两张图分别保存成pfm
+
+<img src="https://upload-images.jianshu.io/upload_images/12014150-fb67235f36d4322b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Untitled 1.png" width="40%;" />
+
+`reproject_with_depth()`: 将ref的点投影到src上，再投影回来
+
+- 参数：ref的深度图和内外参，src的深度图和内外参
+- 返回值：重投影回来的深度图，重投影回来的x和y坐标，在src上的x和y坐标 尺寸都是(128, 160)
+
+`check_gemoetric_consistency()`: 几何一致性检验，调用上面的方法进行重投影，重投影后像素偏移<1 && 深度差<1%则通过校验
+
+- 参数：ref的深度图和内外参，src的深度图和内外参
+- 返回值：
+    - mask: 通过几何检验的mask图
+    - depth_reprojected: 重投影后的深度图
+    - x2d_src： ref这些像素在src上的坐标
+    - y2d_src： ref这些像素在src上的坐标
+
+`filter_depth()`: 通过光度一致性约束和几何一致性约束filter上一步得到的深度图
+
+- `photo_mask`: 置信度图>0.8
+- `geometric_mask`: 至少3个src满足上面的几何一致性校验(重投影后像素偏移<1 && 深度差<1%)
+- filter每张ref的x y depth，并赋予颜色
+- 最终融合生成最后的点云
+
+<img src="https://upload-images.jianshu.io/upload_images/12014150-6e8dc8758df22e96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Untitled 2.png" width="50%;" />
 
 ### module.py
 
 - `ConvBnReLU`, `ConvBn`, `ConvBnReLU3D`, `ConvBn3D`均为基础的网络结构，原始论文中例如特征提取中的一层即为这里的一个基础模块
 - `BasicBlock`, `Hourglass3d`在代码运行中并没使用
 - `homo_warping`: 将src图的特征体，根据ref和src的投影矩阵，投影到ref视角下
-    
+  
     ```python
     def homo_warping(src_fea, src_proj, ref_proj, depth_values):
         """投影变换：将src图像的特征投影到ref图像上，融合深度假设范围，得到warped volume
@@ -281,7 +339,7 @@ def train_sample(sample, detailed_summary=False):
         return warped_src_fea
     ```
     
-- `depth_regression`: 深度回归，根据之前假设的192个深度经过网络算完得到的不同概率，乘以深度假设，求得期望（最后在深度假设维度做了加法，所以运算后深度假设这一维度就没了）这个期望即是最终估计的最优深度，对应论文中的公式（3）<img src="https://latex.codecogs.com/svg.image?D&space;=&space;\sum_{d=d_{min}}^{d_{max}}&space;d&space;\times&space;P(d)" title="D = \sum_{d=d_{min}}^{d_{max}} d \times P(d)" />
+- `depth_regression`: 深度回归，根据之前假设的192个深度经过网络算完得到的不同概率，乘以深度假设，求得期望（最后在深度假设维度做了加法，所以运算后深度假设这一维度就没了）这个期望即是最终估计的最优深度，对应论文中的公式（3）$D = \sum_{d=d_{min}}^{d_{max}} d \times P(d)$
 
 ### mvsnet.py
 
@@ -303,40 +361,19 @@ def train_sample(sample, detailed_summary=False):
         3. 通过特征提取网络之后，原始图像的3-channel变为32维的高位特征，并且图像尺寸缩减到原来的1/4
     2. **differential homograph**, build cost volume
         1. 将ref的32维特征和ref投影过来的高维特征累积构成原始cost volume
-        2. 通过公式(2) <img src="https://latex.codecogs.com/svg.image?C&space;=&space;\frac{\sum_{i=1}^N(V_i&space;-&space;\bar{V_i})^2}{N}" title="C = \frac{\sum_{i=1}^N(V_i - \bar{V_i})^2}{N}" /> 计算方差得到最后的cost volume(在实现里通过<img src="https://latex.codecogs.com/svg.image?\frac{\sum_{i=1}^N&space;V_i^2}{N}&space;-&space;\bar{V_i}^2" title="\frac{\sum_{i=1}^N V_i^2}{N} - \bar{V_i}^2" />公式简化计算)
+        2. 通过公式(2) $C = \frac{\sum_{i=1}^N(V_i - \bar{V_i})^2}{N}$ 计算方差得到最后的cost volume(在实现里通过$\frac{\sum_{i=1}^N V_i^2}{N} - \bar{V_i}^2$公式简化计算)
         3. 最终的cost volume维度是[B, 32, 192, H/4, W/4]
     3. **cost volume regularization**
-        
+       
         > 这个cost网络本身是不改变维度的 只是去除噪声更加抽象，真正把32拍成1的是最后一个prob层(soft argmin)，最终的物理含义是 某一个pixel的某一个深度假设位置的概率值
         > 
         1. 首先通过代价体正则化网络进行进一步抽象，最终得到的维度是[B, 1, 192, H/4, W/4]
         2. 通过squeeze将维度为1的维度去除掉，得到[B, 192, H/4, W/4] 
         3. 通过Softmax函数，将深度维度的信息压缩为0～1之间的分布，得到概率体probability volume
         4. 通过深度回归depth regression，得到估计的最优深度图 [B, H, W]
-        5. 最后进行光度一致性校验，简单来说就是选取上面估计的最优深度附近的四个点，再次通过depth regression得到深度值索引，再通过gather函数得到光度一致性校验的置信度，但是这一步不影响最终估计的深度图
+        5. 最后进行光度一致性校验，最终得到跟深度图尺寸一样的**置信度图**：简单来说就是选取上面估计的最优深度附近的四个点，再次通过depth regression得到深度值索引，再通过gather函数从192个深度假设层中获取index对应位置的数据
     4. **depth map refinement**：将原图和得到的深度图合并送入优化残差网络，输出优化后的深度图
 - `mvsnet_loss`
     - 根据公式(4)计算loss
     - 由于是有监督学习，loss就是估计的深度图和ground truth深度图差一差的绝对值
     - 唯一要注意的是，数据集中的mask终于在这发挥作用了，我们只选取mask>0.5，也就是可视化中白色的部分计算loss，只有这部分的点深度是valid的
-
----
-
-## 4 PyTorch技巧
-
-- tensorboard中使用SummaryWriter记录训练可视化
-- 提升计算速度(但计算中可能有随机性导致网络前馈结果略有差异)
-    
-    ```python
-    import torch.backends.cudnn as cudnn
-    cudnn.benchmark = True
-    ```
-    
-- DataLoader在train的时候`drop_last=True`，test的时候还是为False
-- Adam优化器的参数：`lr=0.001, betas=(0.9,0.999), weight_decay`
-- `model = nn.DataParallel(model).cuda()` 使用多GPU加速并强制放到cuda上计算
-- 动态调整学习率：`torch.optim.lr_scheduler.MultiStepLR(optimizer, milestonses, gamma, last_epoch)`，之后把这个当作优化器用
-- 统计网络中的参数数量：`sum([p.data.nelement() for p in model.parameters()])`
-- 假设一共50个数据：batch_size=1代表着我每次就看一个数据，然后就梯度下降，也就是走一个step，50数据看完之后完成一个epoch；batch_size=10代表每次一下子看10个数据，然后走一个step，5个step之后就完成一个epoch
-    - batch_size越小训练越慢
-    - 越大需要的内存越高
