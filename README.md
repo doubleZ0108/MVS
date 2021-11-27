@@ -15,10 +15,10 @@
 | 6 | [RayNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/RayNet.md) | RayNet: Learning Volumetric 3D Reconstruction with Ray Potentials | CVPR 2018 oral | [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Paschalidou_RayNet_Learning_Volumetric_CVPR_2018_paper.html)<br />[code](https://github.com/paschalidoud/raynet) | ★★★☆ |
 | 7 | [AttMVSNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/AttMVSNet.md) | Attention-Aware Multi-View Stereo                            | CVPR 2020      | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Luo_Attention-Aware_Multi-View_Stereo_CVPR_2020_paper.html) | ★☆ |
 | 8 | [CasMVSNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/CasMVSNet.md) | Cascade Cost Volume for High-Resolution Multi-View Stereo and Stereo Matching | CVPR 2020 oral | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Gu_Cascade_Cost_Volume_for_High-Resolution_Multi-View_Stereo_and_Stereo_Matching_CVPR_2020_paper.html)<br />[code](https://github.com/alibaba/cascade-stereo) | ★★★★★ |
-|      |              | PatchmatchNet: Learned Multi-View Patchmatch Stereo          | CVPR 2021oral  | [paper](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_PatchmatchNet_Learned_Multi-View_Patchmatch_Stereo_CVPR_2021_paper.html)<br />[code](https://github.com/FangjinhuaWang/PatchmatchNet) |  |
+| 9 | PatchmatchNet | PatchmatchNet: Learned Multi-View Patchmatch Stereo          | CVPR 2021oral  | [paper](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_PatchmatchNet_Learned_Multi-View_Patchmatch_Stereo_CVPR_2021_paper.html)<br />[code](https://github.com/FangjinhuaWang/PatchmatchNet) |  |
 
-## 🔬代码/项目
+## 🔬项目/代码
 
-- fusibile深度图融合点云 [环境配置](https://github.com/doubleZ0108/MVS/tree/master/fusibile)
-- MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) | [代码精读笔记](https://github.com/doubleZ0108/MVS/tree/master/MVSNet)
-- PointMVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md) | 
+- fusibile深度图融合点云 [环境配置](https://github.com/doubleZ0108/MVS/blob/master/fusibile/setup.md)
+- MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) | [代码精读笔记](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
+- PointMVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
