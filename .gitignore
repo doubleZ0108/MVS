@@ -20,4 +20,3 @@ fusibile/build/
 PointMVSNet/outputs/
 PointMVSNet/pointmvsnet/functions/build/
 PointMVSNet/pointmvsnet/functions/dgcnn_ext.cpython-36m-x86_64-linux-gnu.so
-PointMVSNet/pointmvsnet/functions/csrc/gather_knn_kernel.cu
