@@ -2,6 +2,8 @@
 .vscode/
 .idea/
 __pycache__
+Env*
+*.pyc
 
 doublez-*.ipynb
 
@@ -20,3 +22,11 @@ fusibile/build/
 PointMVSNet/outputs/
 PointMVSNet/pointmvsnet/functions/build/
 PointMVSNet/pointmvsnet/functions/dgcnn_ext.cpython-36m-x86_64-linux-gnu.so
+
+# CVP-MVSNet
+CVP-MVSNet/logs/*
+CVP-MVSNet/outputs*
+CVP-MVSNet/checkpoints/
+CVP-MVSNet/dataset/dtu-train-128/
+CVP-MVSNet/dataset/dtu-test-1200/
+CVP-MVSNet/fusion/fusibile
