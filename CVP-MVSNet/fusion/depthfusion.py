@@ -215,7 +215,7 @@ if __name__ == '__main__':
     num_consistent = args.num_consistent
 
     # Read test list
-    testlist = "./scan_list_test.txt"
+    testlist = "./myscan_list_test.txt"
     with open(testlist) as f:
         scans = f.readlines()
         scans = [line.rstrip() for line in scans]

@@ -36,6 +36,7 @@ def getArgsParser():
     
     # Evaluation settings 
     parser.add_argument('--outdir', default='./outputs/debug/', help='the directory to save depth outputs')
+    # 这几个eval的参数好像没用过
     parser.add_argument('--eval_visualizeDepth', type=int, default=1)
     parser.add_argument('--eval_prob_filtering', type=int, default=0)
     parser.add_argument('--eval_prob_threshold', type=float, default=0.99)

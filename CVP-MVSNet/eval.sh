@@ -7,7 +7,8 @@
 DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/CVP-MVSNet/dtu-test-1200/"
 
 # Checkpoint
-LOAD_CKPT_DIR="./checkpoints/pretrained/model_000027.ckpt"
+# LOAD_CKPT_DIR="./checkpoints/pretrained/model_000027.ckpt"
+LOAD_CKPT_DIR="./checkpoints/exp/train_dtu_128/model_000000.ckpt"
 
 # Logging
 LOG_DIR="./logs/"
