@@ -15,7 +15,7 @@ LOG_DIR="./logs/"
 # Output dir
 OUT_DIR="./outputs_pretrained/"
 
-python3 eval.py \
+CUDA_VISIBLE_DEVICES=0 python eval.py \
 \
 --info="eval_pretrained_e27" \
 --mode="test" \

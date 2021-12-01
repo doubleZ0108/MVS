@@ -9,7 +9,7 @@ DEPTH_FOLDER="../outputs_pretrained/"
 OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
 
-python2 depthfusion.py \
+python depthfusion.py \
 --dtu_test_root=$DTU_TEST_ROOT \
 --depth_folder=$DEPTH_FOLDER \
 --out_folder=$OUT_FOLDER \

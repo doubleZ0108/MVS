@@ -143,8 +143,8 @@ def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics
             D1 = torch.transpose(ref_depths[batch,:,:],0,1).reshape([-1]) # Transpose before reshape to produce identical results to numpy and matlab version.
             D2 = D1+1
 
-            X1 = X*D1
-            X2 = X*D2
+            X1 = X*D1.double()
+            X2 = X*D2.double()
             ray1 = torch.matmul(torch.inverse(ref_intrinsics[batch]),X1)
             ray2 = torch.matmul(torch.inverse(ref_intrinsics[batch]),X2)
 
@@ -184,7 +184,7 @@ def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics
             ans = torch.matmul(torch.inverse(M1),M2.unsqueeze(2))
             delta_d = ans[:,0,0]
 
-            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t()
+            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t().double()
 
             for depth_level in range(-d,d):
                 depth_hypos[batch,depth_level+d,:,:] += depth_level*interval_maps

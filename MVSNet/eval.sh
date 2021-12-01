@@ -4,7 +4,7 @@ DTU_TESTING="/media/public/yan1/doublez/realdoubleZ/Data/MVS/test/dtu"
 # Lab
 # MVS_TRAINING="/home/doublez/Data/MVS/test/dtu"
 
-CKPT_FILE="./checkpoints/baseline/model_000003.ckpt"
+CKPT_FILE="./checkpoints/baseline/model_000015.ckpt"
 
 CUDA_VISIBLE_DEVICES=0 python eval.py \
     --dataset=dtu_yao_eval \
