@@ -28,7 +28,7 @@ checkArgs(args)
 
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
-torch.backends.cudnn.benchmark=True
+torch.backends.cudnn.benchmark=True     # 初始网络寻找最佳方法以加速
 
 # Check checkpoint directory
 if not os.path.exists(args.logckptdir+args.info.replace(" ","_")):
@@ -88,10 +88,12 @@ optimizer = optim.Adam(model.parameters(), lr = args.lr, betas=(0.9, 0.999), wei
 
 # load network parameters
 start_epoch = 0
+sw_path = args.logckptdir + args.info
 if (args.mode == "train" and args.resume) or (args.mode == "test" and not args.loadckpt):
     logger.info("Resuming or testing...")
     saved_models = [fn for fn in os.listdir(sw_path) if fn.endswith(".ckpt")]
     saved_models = sorted(saved_models, key=lambda x: int(x.split('_')[-1].split('.')[0]))
+    print(saved_models)
 
     # use the latest checkpoint file
     loadckpt = os.path.join(sw_path, saved_models[-1])
@@ -162,6 +164,7 @@ def train_sample(sample, detailed_summary=False):
     sample_cuda = tocuda(sample)
     ref_depths = sample_cuda["ref_depths"]
 
+    # @mark train核心步骤
     outputs = model(\
     sample_cuda["ref_img"].float(), \
     sample_cuda["src_imgs"].float(), \

@@ -100,7 +100,6 @@ def save_pfm(filename, image, scale=1):
     file.close()
 
 def read_cam_file(filename):
-
     with open(filename) as f:
         lines = f.readlines()
         lines = [line.rstrip() for line in lines]
@@ -134,7 +133,7 @@ def read_img(filename):
     # scale 0~255 to 0~1
     img = np.array(img, dtype=np.float32) / 255.
     if img.shape[0] == 1200:
-        img = img[:1184,:1600,:]
+        img = img[:1184,:1600,:]    # @Q why crop?
 
     return img
 

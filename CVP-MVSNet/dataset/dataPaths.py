@@ -33,7 +33,7 @@ def getImageFile(data_root,mode,scan,view,light):
     return image_file
 
 def getCameraFile(data_root,mode,view):
-    cam_name = str(view).zfill(8)+"_cam.txt"
+    cam_name = str(view).zfill(8)+"_cam.txt"        # @mark 填补文字长度
     cam_path = "Cameras/"
     cam_file = os.path.join(data_root,cam_path,cam_name)
     return cam_file
