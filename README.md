@@ -22,4 +22,4 @@
 - fusibile深度图融合点云 [环境配置](https://github.com/doubleZ0108/MVS/blob/master/fusibile/setup.md)
 - MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) | [代码精读笔记](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
 - PointMVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
-- CVP-MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) | [代码结构笔记]()
+- CVP-MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) | [代码结构笔记](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)

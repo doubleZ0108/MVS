@@ -7,6 +7,9 @@ Env*
 
 doublez-*.ipynb
 
+# Evaluation
+Evaluation/
+
 # MVSNet
 MVSNet/outputs/
 MVSNet/checkpoints/*
