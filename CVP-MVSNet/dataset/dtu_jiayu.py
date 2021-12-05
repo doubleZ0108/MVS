@@ -120,9 +120,12 @@ class MVSDataset(Dataset):
             depth_file = getDepthFile(self.data_root,self.args.mode,scan,ref_view)
             ref_depth = read_depth(depth_file)
             depth_frame_size = (ref_depth.shape[0],ref_depth.shape[1])
+
+            # @Q 为什么要再复制一遍来用
+            # 观察到frame中每个数据的精度要高一点 e.g. 616.43438721 | ref_depth里的数据 e.g. 616.4344
             frame = np.zeros(depth_frame_size)
             frame[:ref_depth.shape[0],:ref_depth.shape[1]] = ref_depth
-            ref_depths.append(frame)
+            ref_depths.append(frame)    # 到这里只是读了这一张深度图，放到一个空的数组里，现在数组长度为1
 
             # Downsample the depth for each scale.
             ref_depth = Image.fromarray(ref_depth)
@@ -132,9 +135,9 @@ class MVSDataset(Dataset):
                 new_size = (original_size/(2**scale)).astype(int)
                 down_depth = ref_depth.resize((new_size),Image.BICUBIC)
                 frame = np.zeros(depth_frame_size)
-                down_np_depth = np.array(down_depth)
-                frame[:down_np_depth.shape[0],:down_np_depth.shape[1]] = down_np_depth
-                ref_depths.append(frame)
+                down_np_depth = np.array(down_depth)    # 这里是下采样的深度图(64*80)
+                frame[:down_np_depth.shape[0],:down_np_depth.shape[1]] = down_np_depth  # 这里把小图放到了128*160正常尺寸图像的左上角
+                ref_depths.append(frame)    # 最终数组中有两个元素，尺寸都是128*160
 
         # Orgnize output and return
         sample = {}
@@ -147,8 +150,6 @@ class MVSDataset(Dataset):
         sample["depth_min"] = depth_min
         sample["depth_max"] = depth_max
 
-        # print(sample)
-
         if self.args.mode == "train":
             sample["ref_depths"] = np.array(ref_depths,dtype=float)
             sample["ref_depth_mask"] = np.array(ref_depth_mask)
@@ -156,6 +157,3 @@ class MVSDataset(Dataset):
             sample["filename"] = scan + '/{}/' + '{:0>8}'.format(ref_view) + "{}"
 
         return sample
-
-            
-

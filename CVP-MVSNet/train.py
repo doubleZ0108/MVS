@@ -16,6 +16,9 @@ from argsParser import getArgsParser,checkArgs
 import torch.utils
 import torch.utils.checkpoint
 
+from tensorboardX import SummaryWriter
+
+
 # Debug import
 # import pdb
 # import matplotlib.pyplot as plt
@@ -58,6 +61,9 @@ consoleHandler.setFormatter(formatter)
 logger.addHandler(consoleHandler)
 logger.info("Logger initialized.")
 logger.info("Writing logs to file:"+logfile)
+
+# tensorboard
+v_logger = SummaryWriter(args.logckptdir)
 
 settings_str = "All settings:\n"
 line_width = 30
@@ -142,6 +148,7 @@ def train():
             logger.info('Epoch {}/{}, Iter {}/{}, train loss = {:.3f}, time = {:.3f}'.format(epoch_idx, args.epochs, batch_idx,
                                                                                      len(train_loader), loss,
                                                                                      time.time() - start_time))
+            v_logger.add_scalar('train_loss', loss, global_step)
 
         # checkpoint
         if (epoch_idx + 1) % args.save_freq == 0:
@@ -153,6 +160,7 @@ def train():
             logger.info("model_{:0>6}.ckpt saved".format(epoch_idx))
         this_loss = np.mean(this_loss)
         logger.info("Epoch loss: {:.5f} --> {:.5f}".format(last_loss, this_loss))
+        v_logger.add_scalar('train_epoch_loss', this_loss, global_step)
 
         lr_scheduler.step()
 
