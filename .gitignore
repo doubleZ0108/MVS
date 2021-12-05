@@ -23,6 +23,7 @@ fusibile/build/
 
 # PointMVSNet
 PointMVSNet/outputs/
+PointMVSNet/checkpoints/
 PointMVSNet/pointmvsnet/functions/build/
 PointMVSNet/pointmvsnet/functions/dgcnn_ext.cpython-36m-x86_64-linux-gnu.so
 

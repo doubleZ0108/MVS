@@ -1,4 +1,4 @@
-OUTPUT_DIR: "outputs/exp/"
+OUTPUT_DIR: "checkpoints/exp/"
 DATA:
   TRAIN:
     ROOT_DIR: "/media/public/yan1/doublez/realdoubleZ/Data/MVS/train/dtu"
@@ -26,7 +26,7 @@ SOLVER:
   WEIGHT_DECAY: 0.001
   TYPE: 'RMSprop'
 TRAIN:
-  BATCH_SIZE: 5
+  BATCH_SIZE: 2
   CHECKPOINT_PERIOD: 1
   LOG_PERIOD: 100
 TEST:

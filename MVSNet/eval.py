@@ -328,7 +328,7 @@ def filter_depth(scan_folder, out_folder, plyfilename):
 
 if __name__ == '__main__':
     # step1. save all the depth maps and the masks in outputs directory
-    # save_depth()
+    save_depth()
 
     with open(args.testlist) as f:
         scans = f.readlines()
