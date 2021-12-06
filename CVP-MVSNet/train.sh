@@ -4,10 +4,10 @@
 
 # Dataset
 # DATASET_ROOT="./dataset/dtu-train-128/"
-DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/CVP-MVSNet/dtu-train-128/"
+DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-train-128/"
 
 # Logging
-CKPT_DIR="./checkpoints/buf/"
+CKPT_DIR="./checkpoints/exp/"
 LOG_DIR="./logs/"
 
 CUDA_VISIBLE_DEVICES=6 python train.py \
@@ -28,4 +28,4 @@ CUDA_VISIBLE_DEVICES=6 python train.py \
 --loadckpt='' \
 --logckptdir=$CKPT_DIR \
 --loggingdir=$LOG_DIR \
---resume=0 \
+--resume=1 \

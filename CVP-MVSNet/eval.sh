@@ -4,7 +4,7 @@
 
 # Dataset
 # DATASET_ROOT="./dataset/dtu-test-1200/"
-DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/CVP-MVSNet/dtu-test-1200/"
+DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
 # Checkpoint
 # LOAD_CKPT_DIR="./checkpoints/pretrained/model_000027.ckpt"

@@ -7,9 +7,9 @@
 #include <ATen/cuda/detail/TensorInfo.cuh>
 #include <ATen/cuda/detail/IndexUtils.cuh>
 
-#define CHECK_CUDA(x) AT_CHECK(x.type().is_cuda(), #x " must be a CUDA tensor")
-#define CHECK_CONTIGUOUS(x) AT_CHECK(x.is_contiguous(), #x " must be contiguous")
-#define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
+// #define CHECK_CUDA(x) AT_CHECK(x.type().is_cuda(), #x " must be a CUDA tensor")
+// #define CHECK_CONTIGUOUS(x) AT_CHECK(x.is_contiguous(), #x " must be contiguous")
+// #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 // #define CHECK_EQ(x, y) AT_CHECK(x == y, #x " does not equal to " #y)
 // CHECK_EQ is defined at torch/lib/include/c10/util/logging_is_not_google_glog.h
 
@@ -31,12 +31,12 @@ at::Tensor GatherKNNForward(
   const auto k = index.size(2);
 
   // Sanity check
-  CHECK_CUDA(input);
-  CHECK_CUDA(index);
-  CHECK_EQ(input.dim(), 3);
-  CHECK_EQ(index.dim(), 3);
-  CHECK_EQ(index.size(0), batch_size);
-  CHECK_EQ(index.size(1), num_inst);
+  // CHECK_CUDA(input);
+  // CHECK_CUDA(index);
+  // CHECK_EQ(input.dim(), 3);
+  // CHECK_EQ(index.dim(), 3);
+  // CHECK_EQ(index.size(0), batch_size);
+  // CHECK_EQ(index.size(1), num_inst);
 
   auto input_expand = input.unsqueeze(2).expand({batch_size, channels, num_inst, num_inst});  // (B, C, N, N)
   auto index_expand = index.unsqueeze(1).expand({batch_size, channels, num_inst, k});  // (B, C, N, K)
@@ -103,18 +103,18 @@ at::Tensor GatherKNNBackward(
   const auto k = grad_output.size(3);
 
   // Sanity check
-  CHECK_CUDA(grad_output);
-  CHECK_CUDA(index);
-  CHECK_EQ(grad_output.dim(), 4);
-  CHECK_EQ(index.dim(), 3);
-  CHECK_EQ(index.size(0), batch_size);
-  CHECK_EQ(index.size(1), num_inst);
-  CHECK_EQ(index.size(2), k);
+  // CHECK_CUDA(grad_output);
+  // CHECK_CUDA(index);
+  // CHECK_EQ(grad_output.dim(), 4);
+  // CHECK_EQ(index.dim(), 3);
+  // CHECK_EQ(index.size(0), batch_size);
+  // CHECK_EQ(index.size(1), num_inst);
+  // CHECK_EQ(index.size(2), k);
 
   // Allocate new space for output
   auto grad_input = at::zeros({batch_size, channels, num_inst}, grad_output.type());
-  CHECK_CUDA(grad_input);
-  CHECK_CONTIGUOUS(grad_input);
+  // CHECK_CUDA(grad_input);
+  // CHECK_CONTIGUOUS(grad_input);
 
   // Calculate grids and blocks for kernels 
   const auto totalElements = grad_output.numel();
