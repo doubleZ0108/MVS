@@ -17,6 +17,10 @@ from models.modules import *
 
 # Feature pyramid
 class FeaturePyramid(nn.Module):
+    """
+    金字塔中每个图片都进行同样的特征提取CNN网络，并且共享参数
+    out: [[16, H, W], [16, H/2, W/2]]
+    """
     def __init__(self):
         super(FeaturePyramid, self).__init__()
         self.conv0aa = conv(3, 64, kernel_size=3, stride=1)
@@ -70,14 +74,14 @@ class CostRegNet(nn.Module):
 
     def forward(self, x):
 
-        conv0 = self.conv0a(self.conv0(x))
-        conv2 = self.conv2a(self.conv2(self.conv1(conv0)))
-        conv4 = self.conv4a(self.conv4(self.conv3(conv2)))
+        conv0 = self.conv0a(self.conv0(x))                  # [B, 16, D, H, W]
+        conv2 = self.conv2a(self.conv2(self.conv1(conv0)))  # [B, 32, D/2, H/2, W/2]
+        conv4 = self.conv4a(self.conv4(self.conv3(conv2)))  # [B, 64, D/2, H/2, W/2]
 
-        conv5 = conv2+self.conv5(conv4)
+        conv5 = conv2+self.conv5(conv4)                     # [B, 32, D/2, H/2, W/2]
+        conv6 = conv0+self.conv6(conv5)                     # [B, 16, D, H, W]
 
-        conv6 = conv0+self.conv6(conv5)
-        prob = self.prob0(conv6).squeeze(1)
+        prob = self.prob0(conv6).squeeze(1)                 # [B, D, H, W]
 
         return prob
 

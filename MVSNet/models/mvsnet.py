@@ -46,7 +46,7 @@ class FeatureNet(nn.Module):
 
 class CostRegNet(nn.Module):
     """
-    in: [B, C, D, H/4, W/4] (B, 32, 192. H/4, W/4)
+    in: [B, C, D, H/4, W/4] (B, 32, 192, H/4, W/4)
     out: [B, 1, D, H/4, W/4] (B, 1, 192, 160, 128)
     """
     def __init__(self):
@@ -79,16 +79,17 @@ class CostRegNet(nn.Module):
 
         self.prob = nn.Conv3d(8, 1, 3, stride=1, padding=1)
 
-    def forward(self, x):
+    # @mark 一上来在特征维度降的太多了，而且整体太深了，深度和图像尺寸都被压的太多了，再反卷积回来很多东西都变味了
+    def forward(self, x):                       # (B, 32, 192, 160, 128)
         conv0 = self.conv0(x)                   # (B, 8, 192, 160, 128)
         conv2 = self.conv2(self.conv1(conv0))   # (B, 16, 96, 80, 64)
         conv4 = self.conv4(self.conv3(conv2))   # (B, 32, 48, 40, 32)
         x = self.conv6(self.conv5(conv4))       # (B, 64, 24, 20, 16)
-        x = conv4 + self.conv7(x)
-        x = conv2 + self.conv9(x)
-        x = conv0 + self.conv11(x)
-        x = self.prob(x)
-        return x            # (B, 1, 192, 160, 128)
+        x = conv4 + self.conv7(x)               # (B, 32, 48, 40, 32)
+        x = conv2 + self.conv9(x)               # (B, 16, 96, 80, 64)
+        x = conv0 + self.conv11(x)              # (B, 8, 192, 160, 128)
+        x = self.prob(x)                        # (B, 1, 192, 160, 128)
+        return x
 
 
 class RefineNet(nn.Module):

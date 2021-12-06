@@ -18,6 +18,7 @@ import cv2
 # import matplotlib.pyplot as plt
 # from verifications import *
 
+# 只改变第二维度特征尺寸 in -> out
 def conv(in_planes, out_planes, kernel_size=3, stride=1, padding=1, dilation=1):   
     return nn.Sequential(
             nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride, 
@@ -41,8 +42,8 @@ def conditionIntrinsics(intrinsics,img_shape,fp_shapes):
 
     return torch.stack(intrinsics_out).permute(1,0,2,3) # [B, nScale, 3, 3]
 
+# non-use
 def calInitDepthInterval(ref_in, src_in,ref_ex, src_ex, pixel_interval):
-    
     return 165 # The mean depth interval calculated on 4-1 interval setting...
 
 def calSweepingDepthHypo(ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, nhypothesis_init=48):
@@ -63,6 +64,7 @@ def calSweepingDepthHypo(ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, nhypo
 
     return depth_hypos.cuda()
 
+# 整体内部逻辑完全从MVSNet复制过来，不同点是输入参数是相机内外参，而不是处理好的投影矩阵
 def homo_warping(src_feature, ref_in, src_in, ref_ex, src_ex, depth_hypos):
     # Apply homography warpping on one src feature map from src to ref view.
 
@@ -71,6 +73,7 @@ def homo_warping(src_feature, ref_in, src_in, ref_ex, src_ex, depth_hypos):
     height, width = src_feature.shape[2], src_feature.shape[3]
 
     with torch.no_grad():
+        # @mark 多了这几步把内外参乘起来(MVSNet是在数据部分就乘起来了)
         src_proj = torch.matmul(src_in,src_ex[:,0:3,:])
         ref_proj = torch.matmul(ref_in,ref_ex[:,0:3,:])
         last = torch.tensor([[[0,0,0,1.0]]]).repeat(len(src_in),1,1).cuda()
@@ -293,7 +296,7 @@ class ConvBn3D(nn.Module):
     def forward(self, x):
         return self.bn(self.conv(x))
 
-
+# non-use
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, downsample=None):
         super(BasicBlock, self).__init__()

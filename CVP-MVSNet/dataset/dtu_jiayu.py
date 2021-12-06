@@ -121,7 +121,7 @@ class MVSDataset(Dataset):
             ref_depth = read_depth(depth_file)
             depth_frame_size = (ref_depth.shape[0],ref_depth.shape[1])
 
-            # @Q 为什么要再复制一遍来用
+            # @Q 为什么要再复制一遍来用？ 可能是为了跟下面的统一
             # 观察到frame中每个数据的精度要高一点 e.g. 616.43438721 | ref_depth里的数据 e.g. 616.4344
             frame = np.zeros(depth_frame_size)
             frame[:ref_depth.shape[0],:ref_depth.shape[1]] = ref_depth
@@ -151,7 +151,7 @@ class MVSDataset(Dataset):
         sample["depth_max"] = depth_max
 
         if self.args.mode == "train":
-            sample["ref_depths"] = np.array(ref_depths,dtype=float)
+            sample["ref_depths"] = np.array(ref_depths,dtype=float)     # [B, 2, 128, 160]
             sample["ref_depth_mask"] = np.array(ref_depth_mask)
         elif self.args.mode == "test":
             sample["filename"] = scan + '/{}/' + '{:0>8}'.format(ref_view) + "{}"
