@@ -8,7 +8,7 @@ Env*
 doublez-*.ipynb
 
 # Evaluation
-Evaluation/
+Evaluation/results/
 
 # MVSNet
 MVSNet/outputs/

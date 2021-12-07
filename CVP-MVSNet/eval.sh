@@ -8,17 +8,17 @@ DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-tes
 
 # Checkpoint
 # LOAD_CKPT_DIR="./checkpoints/pretrained/model_000027.ckpt"
-LOAD_CKPT_DIR="./checkpoints/exp/train_dtu_128/model_000000.ckpt"
+LOAD_CKPT_DIR="./checkpoints/exp/train_dtu_128/model_000039.ckpt"
 
 # Logging
 LOG_DIR="./logs/"
 
 # Output dir
-OUT_DIR="./outputs_pretrained/"
+OUT_DIR="./outputs/"
 
-CUDA_VISIBLE_DEVICES=0 python eval.py \
+CUDA_VISIBLE_DEVICES=7 python eval.py \
 \
---info="eval_pretrained_e27" \
+--info="eval_39" \
 --mode="test" \
 \
 --dataset_root=$DATASET_ROOT \

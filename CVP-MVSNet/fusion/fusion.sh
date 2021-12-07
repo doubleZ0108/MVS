@@ -3,9 +3,9 @@
 # date: 2019-11-05
 
 # DTU_TEST_ROOT="../dataset/dtu-test-1200"
-DTU_TEST_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/CVP-MVSNet/dtu-test-1200/"
+DTU_TEST_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
-DEPTH_FOLDER="../outputs_pretrained/"
+DEPTH_FOLDER="../outputs/"
 OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
 
