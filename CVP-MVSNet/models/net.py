@@ -19,7 +19,7 @@ from models.modules import *
 class FeaturePyramid(nn.Module):
     """
     金字塔中每个图片都进行同样的特征提取CNN网络，并且共享参数
-    out: [[16, H, W], [16, H/2, W/2]]
+    out: [[B, 16, H, W], [B, 16, H/2, W/2]]
     """
     def __init__(self):
         super(FeaturePyramid, self).__init__()
@@ -99,24 +99,28 @@ class network(nn.Module):
         depth_est_list = []
         output = {}
 
-        ## Feature extraction
-        ref_feature_pyramid = self.featurePyramid(ref_img,self.args.nscale)
+        ## (1) Feature extraction
+        ref_feature_pyramid = self.featurePyramid(ref_img,self.args.nscale)     # [[B, 16, H, W], [B, 16, H/2, W/2]]
 
         src_feature_pyramids = []
         for i in range(self.args.nsrc):
             src_feature_pyramids.append(self.featurePyramid(src_imgs[:,i,:,:,:],self.args.nscale))
 
-        # Pre-conditioning corresponding multi-scale intrinsics for the feature:
-        ref_in_multiscales = conditionIntrinsics(ref_in,ref_img.shape,[feature.shape for feature in ref_feature_pyramid])
+        # (2) Pre-conditioning corresponding multi-scale intrinsics for the feature:
+        ref_in_multiscales = conditionIntrinsics(ref_in,ref_img.shape,[feature.shape for feature in ref_feature_pyramid])   # [B, nscale, 3, 3]
         src_in_multiscales = []
         for i in range(self.args.nsrc):
             src_in_multiscales.append(conditionIntrinsics(src_in[:,i],ref_img.shape, [feature.shape for feature in src_feature_pyramids[i]]))
-        src_in_multiscales = torch.stack(src_in_multiscales).permute(1,0,2,3,4)
+        src_in_multiscales = torch.stack(src_in_multiscales).permute(1,0,2,3,4)     # (B, nsrc, nscale, 3, 3)
 
-        ## Estimate initial coarse depth map
-        depth_hypos = calSweepingDepthHypo(ref_in_multiscales[:,-1],src_in_multiscales[:,0,-1],ref_ex,src_ex,depth_min, depth_max)
+        ## (3) Estimate initial coarse depth map
+        depth_hypos = calSweepingDepthHypo(ref_in_multiscales[:,-1],src_in_multiscales[:,0,-1],ref_ex,src_ex,depth_min, depth_max)  # (B, D) 这里D=48
+        # @TODO calSweep函数的参数都没用上，删了试试有没有问题
+        # depth_hypos = calSweepingDepthHypo(ref_in_multiscales[:,-1].shape[0], depth_min, depth_max)
 
-        ref_volume = ref_feature_pyramid[-1].unsqueeze(2).repeat(1, 1, len(depth_hypos[0]), 1, 1)
+        # @Q @mark 这里直接通过repeat扩充不是特别好 能不能通过一个网络 (B, 16, H/2, W/2) -> (B, 16, D, H/2, W/2) 这里的D是425~1065的48个数
+        # 或者在这行之后再加个简单的网络好好初始化下ref_volume
+        ref_volume = ref_feature_pyramid[-1].unsqueeze(2).repeat(1, 1, len(depth_hypos[0]), 1, 1)   # (B, 16, D, H/2, W/2)
 
         volume_sum = ref_volume
         volume_sq_sum = ref_volume.pow_(2)
@@ -124,8 +128,10 @@ class network(nn.Module):
             del ref_volume
         for src_idx in range(self.args.nsrc):
             # warpped features
-            warped_volume = homo_warping(src_feature_pyramids[src_idx][-1], ref_in_multiscales[:,-1], src_in_multiscales[:,src_idx,-1,:,:], ref_ex, src_ex[:,src_idx], depth_hypos)
 
+            # 每一个src的最粗糙特征体  ref和src最粗糙图对应的相机内参  ref和src的相机外参(每个视点都一样)  上面的初始深度假设
+            # src_in_multiscales[:,src_idx,-1,:,:]，也可以写成src_in_multiscales[:,src_idx,-1] :-Batch src_idx-第i个src图像 -1-最粗糙的位置
+            warped_volume = homo_warping(src_feature_pyramids[src_idx][-1], ref_in_multiscales[:,-1], src_in_multiscales[:,src_idx,-1,:,:], ref_ex, src_ex[:,src_idx], depth_hypos)
 
             if self.args.mode == "train":
                 volume_sum = volume_sum + warped_volume
@@ -139,27 +145,31 @@ class network(nn.Module):
                 pdb.set_trace()
                 
         # Aggregate multiple feature volumes by variance
-        cost_volume = volume_sq_sum.div_(self.args.nsrc+1).sub_(volume_sum.div_(self.args.nsrc+1).pow_(2))
+        cost_volume = volume_sq_sum.div_(self.args.nsrc+1).sub_(volume_sum.div_(self.args.nsrc+1).pow_(2))  # (B, 16, D, H/2, W/2)
         if self.args.mode == "test":
             del volume_sum
             del volume_sq_sum
 
         # Regularize cost volume
-        cost_reg = self.cost_reg_refine(cost_volume)
+        cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
 
-        prob_volume = F.softmax(cost_reg, dim=1)
+        prob_volume = F.softmax(cost_reg, dim=1)        # (B, D, H/2, W/2)
         depth = depth_regression(prob_volume, depth_values=depth_hypos)
         depth_est_list.append(depth)
 
-        ## Upsample depth map and refine along feature pyramid
+
+        ## (4) Upsample depth map and refine along feature pyramid
         for level in range(self.args.nscale-2,-1,-1):
 
             # Upsample
+            # 先加一维再降下去，要不然差值会报错
             depth_up = nn.functional.interpolate(depth[None,:],size=None,scale_factor=2,mode='bicubic',align_corners=None)
             depth_up = depth_up.squeeze(0)
-            # Generate depth hypothesis
-            depth_hypos = calDepthHypo(self.args,depth_up,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:],ref_ex,src_ex,depth_min, depth_max,level)
 
+            # Generate depth hypothesis
+            # @TODO 剩这两行没看
+            depth_hypos = calDepthHypo(self.args,depth_up,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:],ref_ex,src_ex,depth_min, depth_max,level)
+            
             cost_volume = proj_cost(self.args,ref_feature_pyramid[level],src_feature_pyramids,level,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:], ref_ex, src_ex[:,:],depth_hypos)
 
             cost_reg2 = self.cost_reg_refine(cost_volume)

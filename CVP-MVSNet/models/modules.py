@@ -25,44 +25,57 @@ def conv(in_planes, out_planes, kernel_size=3, stride=1, padding=1, dilation=1):
                         padding=padding, dilation=dilation, bias=True),
             nn.LeakyReLU(0.1))
 
+# 根据特征金字塔缩放构建相机内参金字塔
 def conditionIntrinsics(intrinsics,img_shape,fp_shapes):
+    """ 
+    out: [B, nscale, 3, 3]  nscale=2
+    """
     # Pre-condition intrinsics according to feature pyramid shape.
 
     # Calculate downsample ratio for each level of feture pyramid
     down_ratios = []
     for fp_shape in fp_shapes:
-        down_ratios.append(img_shape[2]/fp_shape[2])
+        # img_shape: (B, 3, H, W)
+        # fp_shape: (B, 16, H, W) -> (B, 16, H/2, W/2)
+        down_ratios.append(img_shape[2]/fp_shape[2])    # 1 -> 2
 
     # condition intrinsics
     intrinsics_out = []
     for down_ratio in down_ratios:
-        intrinsics_tmp = intrinsics.clone()
+        intrinsics_tmp = intrinsics.clone()     # (B, 3, 3)
         intrinsics_tmp[:, :2, :] = intrinsics_tmp[:, :2, :] / down_ratio
         intrinsics_out.append(intrinsics_tmp)
 
+    # stack之后是[2, B, 3, 3]，再换下位置
     return torch.stack(intrinsics_out).permute(1,0,2,3) # [B, nScale, 3, 3]
 
 # non-use
 def calInitDepthInterval(ref_in, src_in,ref_ex, src_ex, pixel_interval):
     return 165 # The mean depth interval calculated on 4-1 interval setting...
 
+# @TODO 前面的参数都没用上
 def calSweepingDepthHypo(ref_in,src_in,ref_ex,src_ex,depth_min, depth_max, nhypothesis_init=48):
-
+    """
+    in: 最粗糙ref和src的内外参，深度范围
+    out: (B, 48) 48层深度假设
+    """
     # Batch
     batchSize = ref_in.shape[0]
-    depth_range = depth_max[0]-depth_min[0]
-    depth_interval_mean = depth_range/(nhypothesis_init-1)
+    depth_range = depth_max[0]-depth_min[0]     # 640
+    depth_interval_mean = depth_range/(nhypothesis_init-1)  # 13.6
+
     # Make sure the number of depth hypothesis has a factor of 2
     assert nhypothesis_init%2 == 0
 
-    depth_hypos = torch.range(depth_min[0],depth_max[0],depth_interval_mean).unsqueeze(0)
+    # 将min-max划分成48份间隔
+    depth_hypos = torch.range(depth_min[0],depth_max[0],depth_interval_mean).unsqueeze(0)   # (1, 48)
 
     # Assume depth range is consistent in one batch.
     for b in range(1,batchSize):
         depth_range = depth_max[b]-depth_min[b]
         depth_hypos = torch.cat((depth_hypos,torch.range(depth_min[0],depth_max[0],depth_interval_mean).unsqueeze(0)),0)
 
-    return depth_hypos.cuda()
+    return depth_hypos.cuda()  # (B, 48)
 
 # 整体内部逻辑完全从MVSNet复制过来，不同点是输入参数是相机内外参，而不是处理好的投影矩阵
 def homo_warping(src_feature, ref_in, src_in, ref_ex, src_ex, depth_hypos):
@@ -104,6 +117,7 @@ def homo_warping(src_feature, ref_in, src_in, ref_ex, src_ex, depth_hypos):
     warped_src_fea = warped_src_fea.view(batch, channels, num_depth, height, width)
 
     return warped_src_fea
+
 
 def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics,src_extrinsics,depth_min,depth_max,level):
     ## Calculate depth hypothesis maps for refine steps
@@ -317,6 +331,15 @@ class BasicBlock(nn.Module):
 
 
 def depth_regression(p, depth_values):
+    """ 
+    把概率体和深度假设的D维度乘在一起，把深度假设回归掉
+    [in]
+    prob_volume: [B, D, H, W]
+    depth_values: [B, D]
+
+    [out]
+    depth: [B, H, W]
+    """
     depth_values = depth_values.view(*depth_values.shape, 1, 1)
     depth = torch.sum(p * depth_values, 1)
     return depth

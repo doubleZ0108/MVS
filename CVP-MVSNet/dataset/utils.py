@@ -109,9 +109,9 @@ def read_cam_file(filename):
     intrinsics = np.fromstring(' '.join(lines[7:10]), dtype=np.float32, sep=' ').reshape((3, 3))
 
     # depth_min & depth_interval: line 11
-    depth_min = float(lines[11].split()[0])
-    depth_interval = float(lines[11].split()[1])
-    depth_max = depth_min+(256*depth_interval)
+    depth_min = float(lines[11].split()[0])         # 425
+    depth_interval = float(lines[11].split()[1])    # 2.5
+    depth_max = depth_min+(256*depth_interval)      # 1065
     return intrinsics, extrinsics, depth_min, depth_max
 
 def write_cam(filename, intrinsic, extrinsic, depth_min, depth_max):
