@@ -1,14 +1,14 @@
 PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/MVSNet/outputs/mvsnet_results/'
-RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/MVSNet/mvsnettest/'
+RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/MVSNet/firstfulleval/'
 METHOD='mvsnet'
-OTHERMSG=''
+OTHERMSG='l3'
 
 # PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/CVP-MVSNet/outputs/cvpmvsnet_results/buf/'
 # RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/CVP-MVSNet/this/'
 # METHOD='cvpmvsnet'
 # OTHERMSG=''
 
-SET=[1]
+SET=[1,4,9,10,11,12,13,15,23,24,29,32,33,34,48,49,62,75,77,110,114,118]
 
 
 mkdir -p $RESULTPATH

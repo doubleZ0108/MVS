@@ -154,7 +154,7 @@ class network(nn.Module):
         cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
 
         prob_volume = F.softmax(cost_reg, dim=1)        # (B, D, H/2, W/2)
-        depth = depth_regression(prob_volume, depth_values=depth_hypos)
+        depth = depth_regression(prob_volume, depth_values=depth_hypos) # (B, H/2, W/2)
         depth_est_list.append(depth)
 
 
@@ -164,12 +164,13 @@ class network(nn.Module):
             # Upsample
             # 先加一维再降下去，要不然差值会报错
             depth_up = nn.functional.interpolate(depth[None,:],size=None,scale_factor=2,mode='bicubic',align_corners=None)
-            depth_up = depth_up.squeeze(0)
+            depth_up = depth_up.squeeze(0)      # (B, H, W)
 
             # Generate depth hypothesis
-            # @TODO 剩这两行没看
-            depth_hypos = calDepthHypo(self.args,depth_up,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:],ref_ex,src_ex,depth_min, depth_max,level)
+            # 精细化的深度假设
+            depth_hypos = calDepthHypo(self.args,depth_up,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:],ref_ex,src_ex,depth_min, depth_max,level)  # (B, 8, H, W)
             
+            # 参数：高分辨率的特征体
             cost_volume = proj_cost(self.args,ref_feature_pyramid[level],src_feature_pyramids,level,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:], ref_ex, src_ex[:,:],depth_hypos)
 
             cost_reg2 = self.cost_reg_refine(cost_volume)

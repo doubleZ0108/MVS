@@ -35,7 +35,7 @@ for cIdx=1:length(UsedSets)
 
     %input data name
     % DataInName=[plyPath sprintf('/%s%03d_%s%s.ply',lower(method_string),cSet,light_string,settings_string)]
-    DataInName = [plyPath sprintf('%s%d%s.ply', lower(method_string), cSet, other_msg)]
+    DataInName = [plyPath sprintf('%s%03d%s.ply', lower(method_string), cSet, other_msg)]
 
     %results name
     EvalName=[resultsPath method_string eval_string num2str(cSet) '.mat']

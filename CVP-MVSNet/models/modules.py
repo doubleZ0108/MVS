@@ -130,15 +130,19 @@ def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics
     height = ref_depths.shape[1]
     width = ref_depths.shape[2]
 
+    # 精细化的深度假设 = 刚得到的粗糙深度图值 +- 4 * interval(指定为6.8085)
     if netArgs.mode == "train":
 
-        depth_interval = torch.tensor([6.8085]*nBatch).cuda() # Hard code the interval for training on DTU with 1 level of refinement.
-        depth_hypos = ref_depths.unsqueeze(1).repeat(1,d*2,1,1)
+        # Hard code the interval for training on DTU with 1 level of refinement.
+        depth_interval = torch.tensor([6.8085]*nBatch).cuda()       # [B]batch个6.8的初始值
+        depth_hypos = ref_depths.unsqueeze(1).repeat(1,d*2,1,1)     # (B, 8, H, W)
+
         for depth_level in range(-d,d):
-            depth_hypos[:,depth_level+d,:,:] += (depth_level)*depth_interval[0]
+            depth_hypos[:,depth_level+d,:,:] += (depth_level)*depth_interval[0]     # (B, 8, H, W)
 
         return depth_hypos
 
+    # @Q 这...怎么能看懂啊
     with torch.no_grad():
 
         ref_depths = ref_depths
@@ -201,10 +205,10 @@ def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics
             ans = torch.matmul(torch.inverse(M1),M2.unsqueeze(2))
             delta_d = ans[:,0,0]
 
-            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t().double()
+            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t().double()  # (H, W)
 
             for depth_level in range(-d,d):
-                depth_hypos[batch,depth_level+d,:,:] += depth_level*interval_maps
+                depth_hypos[batch,depth_level+d,:,:] += depth_level*interval_maps   # (B, 8, H, W)
 
         # print("Calculated:")
         # print(interval_maps[0,0])
@@ -219,13 +223,13 @@ def proj_cost(settings,ref_feature,src_feature,level,ref_in,src_in,ref_ex,src_ex
     batch, channels = ref_feature.shape[0], ref_feature.shape[1]
     num_depth = depth_hypos.shape[1]
     height, width = ref_feature.shape[2], ref_feature.shape[3]
-    nSrc = len(src_feature)
 
     volume_sum = ref_feature.unsqueeze(2).repeat(1,1,num_depth,1,1)
     volume_sq_sum = volume_sum.pow_(2)
 
     for src in range(settings.nsrc):
 
+        # 整体跟homo_warping一模一样
         with torch.no_grad():
             src_proj = torch.matmul(src_in[:,src,:,:],src_ex[:,src,0:3,:])
             ref_proj = torch.matmul(ref_in,ref_ex[:,0:3,:])
@@ -245,7 +249,7 @@ def proj_cost(settings,ref_feature,src_feature,level,ref_in,src_in,ref_ex,src_ex
             xyz = torch.unsqueeze(xyz, 0).repeat(batch, 1, 1)
             rot_xyz = torch.matmul(rot, xyz)
 
-            rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_depth, 1) * depth_hypos.view(batch, 1, num_depth,height*width)  # [B, 3, Ndepth, H*W]
+            rot_depth_xyz = rot_xyz.unsqueeze(2).repeat(1, 1, num_depth, 1) * depth_hypos.view(batch, 1, num_depth,height*width)  # [B, 3, Ndepth, H*W] 这里的最后一维h*w不一样
             proj_xyz = rot_depth_xyz + trans.view(batch, 3, 1, 1)
             proj_xy = proj_xyz[:, :2, :, :] / proj_xyz[:, 2:3, :, :]
             proj_x_normalized = proj_xy[:, 0, :, :] / ((width - 1) / 2) - 1
@@ -253,8 +257,8 @@ def proj_cost(settings,ref_feature,src_feature,level,ref_in,src_in,ref_ex,src_ex
             proj_xy = torch.stack((proj_x_normalized, proj_y_normalized), dim=3)
             grid = proj_xy
 
-        warped_src_fea = F.grid_sample(src_feature[src][level], grid.view(batch, num_depth * height, width, 2), mode='bilinear',
-                                       padding_mode='zeros')
+        # 再就是这里一点点不一样 获取某个src对应level的特征体(其实也就是最大尺寸的特征体)
+        warped_src_fea = F.grid_sample(src_feature[src][level], grid.view(batch, num_depth * height, width, 2), mode='bilinear', padding_mode='zeros')
         warped_src_fea = warped_src_fea.view(batch, channels, num_depth, height, width)
 
         volume_sum = volume_sum + warped_src_fea
