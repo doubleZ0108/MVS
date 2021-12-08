@@ -16,7 +16,7 @@ LOG_DIR="./logs/"
 # Output dir
 OUT_DIR="./outputs/"
 
-CUDA_VISIBLE_DEVICES=7 python eval.py \
+CUDA_VISIBLE_DEVICES=5 python eval.py \
 \
 --info="eval_39" \
 --mode="test" \

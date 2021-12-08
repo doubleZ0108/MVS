@@ -189,7 +189,7 @@ def train_sample(sample, detailed_summary=False):
     dWidth = ref_depths.shape[3]
     loss = []
     for i in range(0,args.nscale):
-        depth_gt = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项
+        depth_gt = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项 三四维是取左上角
         mask = depth_gt>425
         loss.append(model_loss(depth_est_list[i], depth_gt.float(), mask))
 

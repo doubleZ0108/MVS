@@ -12,7 +12,7 @@ if not os.path.isdir(dtu_eval_folder):
     os.mkdir(dtu_eval_folder)
 
 # Read test list
-testlist = "./myscan_list_test.txt"
+testlist = "./scan_list_test.txt"
 with open(testlist) as f:
     scans = f.readlines()
     scans = [line.rstrip() for line in scans]

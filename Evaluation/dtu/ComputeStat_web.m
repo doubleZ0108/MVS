@@ -47,10 +47,8 @@ for cStat=1:length(UsedSets) %Data set number
     
     %input results name
     % EvalName=[resultsPath method_string eval_string num2str(currentSet) '.mat'];
-    if cStat ==1 && strcmp(other_msg, '') == 0
-        other_msg = sprintf('_%s', other_msg)
-    end
-    EvalName=[resultsPath method_string other_msg eval_string num2str(currentSet) '.mat'];
+
+    EvalName=[resultsPath method_string eval_string num2str(currentSet) '.mat'];
     
     disp(EvalName);
     load(EvalName);

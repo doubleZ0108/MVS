@@ -162,8 +162,7 @@ class network(nn.Module):
         for level in range(self.args.nscale-2,-1,-1):
 
             # Upsample
-            # 先加一维再降下去，要不然差值会报错
-            depth_up = nn.functional.interpolate(depth[None,:],size=None,scale_factor=2,mode='bicubic',align_corners=None)
+            depth_up = nn.functional.interpolate(depth[None,:],size=None,scale_factor=2,mode='bicubic',align_corners=None)  # 先加一维再降下去，要不然插值会报错
             depth_up = depth_up.squeeze(0)      # (B, H, W)
 
             # Generate depth hypothesis
