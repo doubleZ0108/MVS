@@ -19,7 +19,18 @@
 
 ## 🔬项目/代码
 
-- fusibile深度图融合点云 [环境配置](https://github.com/doubleZ0108/MVS/blob/master/fusibile/setup.md)
-- MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) | [代码精读笔记](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
-- PointMVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
-- CVP-MVSNet [实验配置](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) | [代码结构笔记](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)
+- fusibile深度图融合点云 [![fusibile env setup](https://img.shields.io/badge/📃环境配置-fusibile-yellow)](https://github.com/doubleZ0108/MVS/blob/master/fusibile/setup.md)
+- MVSNet [![MVSNet env setup](https://img.shields.io/badge/📃环境配置-MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) [![MVSNet code doc](https://img.shields.io/badge/📃代码笔记-MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
+- PointMVSNet [![PointMVSNet env setup](https://img.shields.io/badge/📃环境配置-PointMVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
+- CVP-MVSNet [![CVP-MVSNet env setup](https://img.shields.io/badge/📃环境配置-CVP_MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) [![CVP-MVSNet code doc](https://img.shields.io/badge/📃代码笔记-CVP_MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)
+
+
+
+
+
+
+
+
+
+
+
