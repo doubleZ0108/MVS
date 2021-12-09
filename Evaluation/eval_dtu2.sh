@@ -5,8 +5,8 @@
 # OTHERMSG='l3'
 
 # CVP-MVSNet
-PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/CVP-MVSNet/outputs_exp/cvpmvsnet_results/'
-RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/CVP-MVSNet/exp/'
+PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/CVP-MVSNet/outputs_att/cvpmvsnet_results/'
+RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/CVP-MVSNet/att/'
 METHOD='cvpmvsnet'
 OTHERMSG=''
 

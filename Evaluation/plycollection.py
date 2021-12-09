@@ -2,9 +2,10 @@ import os
 import shutil
 
 def collect_CVPMVSNet():
-    base = '../CVP-MVSNet/outputs/fusibile_fused/'
+    thisname = 'outputs_baseline_full_22'
+    base = '../CVP-MVSNet/' + thisname + '/fusibile_fused/'
     model_name = 'final3d_model.ply'
-    target = '../CVP-MVSNet/outputs/cvpmvsnet_results/'
+    target = '../CVP-MVSNet/' + thisname + '/cvpmvsnet_results/'
     method='cvpmvsnet'
     info = ''
 

@@ -5,7 +5,7 @@
 # DTU_TEST_ROOT="../dataset/dtu-test-1200"
 DTU_TEST_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
-DEPTH_FOLDER="../outputs/"
+DEPTH_FOLDER="../outputs_baseline_full_22/"
 OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
 

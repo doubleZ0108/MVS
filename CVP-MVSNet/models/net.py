@@ -10,6 +10,8 @@
 import torch
 import torch.nn as nn
 from models.modules import *
+from utils import *
+
 # Debug:
 # import pdb,time
 # import matplotlib.pyplot as plt
@@ -153,10 +155,24 @@ class network(nn.Module):
         # Regularize cost volume
         cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
 
+        # region @doubleZ attention test
+        num_depth = depth_hypos.shape[1]
+        print(type(num_depth), type(cost_reg))
+        att_net = nn.Sequential(
+            ConvBnReLU(num_depth, num_depth, 1, 1, 0),
+            ConvBnReLU(num_depth, num_depth, 1, 1, 0),
+            ConvBnReLU(num_depth, num_depth, 1, 1, 0)
+        )
+        cost_att = att_net(cost_reg.cpu())
+        cost_att = F.softmax(cost_att)
+        cost_reg = cost_reg * cost_att.cuda() + cost_reg
+        # endregion
+
+
         prob_volume = F.softmax(cost_reg, dim=1)        # (B, D, H/2, W/2)
         depth = depth_regression(prob_volume, depth_values=depth_hypos) # (B, H/2, W/2)
         depth_est_list.append(depth)
-
+       
 
         ## (4) Upsample depth map and refine along feature pyramid
         for level in range(self.args.nscale-2,-1,-1):
@@ -175,6 +191,19 @@ class network(nn.Module):
             cost_reg2 = self.cost_reg_refine(cost_volume)
             if self.args.mode == "test":
                 del cost_volume
+
+            # region @doubleZ attention test
+            num_depth = depth_hypos.shape[1]
+            att_net2 = nn.Sequential(
+                ConvBnReLU(num_depth, num_depth, 1, 1, 0),
+                ConvBnReLU(num_depth, num_depth, 1, 1, 0),
+                ConvBnReLU(num_depth, num_depth, 1, 1, 0)
+            )
+            cost_att2 = att_net2(cost_reg2.cpu())
+            cost_att2 = F.softmax(cost_att2)
+            cost_reg2 = cost_reg2 * cost_att2.cuda() + cost_reg2
+            # endregion
+            
             
             prob_volume = F.softmax(cost_reg2, dim=1)
             if self.args.mode == "test":

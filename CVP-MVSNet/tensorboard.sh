@@ -1,1 +1,1 @@
-tensorboard --logdir checkpoints/exp/ --port 22060
+tensorboard --logdir checkpoints/att3/ --port 22060
