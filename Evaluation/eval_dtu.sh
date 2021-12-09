@@ -5,13 +5,14 @@
 # OTHERMSG='l3'
 
 # CVP-MVSNet
-PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/CVP-MVSNet/outputs_exp/cvpmvsnet_results/'
-RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/CVP-MVSNet/exp/'
+THISNAME='outputs_baseline_full_22'
+PLYPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/CVP-MVSNet/'$THISNAME'/cvpmvsnet_results/'
+RESULTPATH='/media/public/yan1/doublez/realdoubleZ/Developer/MVS/Evaluation/results/CVP-MVSNet/'$THISNAME'/'
 METHOD='cvpmvsnet'
 OTHERMSG=''
 
-# SET=[1,4,9,10,11,12,13,15,23,24,29,32,33,34,48,49,62,75,77,110,114,118]
-SET=[1]
+SET=[1,4,9,10,11,12,13,15,23,24,29,32,33,34,48,49,62,75,77,110,114,118]
+# SET=[1]
 
 mkdir -p $RESULTPATH
 

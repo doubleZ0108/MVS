@@ -6,17 +6,19 @@
 # DATASET_ROOT="./dataset/dtu-test-1200/"
 DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
-# Checkpoint
-# LOAD_CKPT_DIR="./checkpoints/pretrained/model_000027.ckpt"
-LOAD_CKPT_DIR="./checkpoints/exp/train_dtu_128/model_000022.ckpt"
-
 # Logging
 LOG_DIR="./logs/"
 
-# Output dir
-OUT_DIR="./outputs_baseline_full_22/"
 
-CUDA_VISIBLE_DEVICES=3 python eval.py \
+# @TODO
+THISNAME="att3_full_22"
+
+LOAD_CKPT_DIR="./checkpoints/att3/train_dtu_128/model_000022.ckpt"
+
+OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
+
+
+CUDA_VISIBLE_DEVICES=0 python eval.py \
 \
 --info="eval_baseline_full_22" \
 --mode="test" \

@@ -4,10 +4,13 @@
 
 # DTU_TEST_ROOT="../dataset/dtu-test-1200"
 DTU_TEST_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
-
-DEPTH_FOLDER="../outputs_baseline_full_22/"
 OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
+
+# @TODO
+THISNAME="att3_full_22"
+
+DEPTH_FOLDER="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
 
 python2 depthfusion.py \
 --dtu_test_root=$DTU_TEST_ROOT \
