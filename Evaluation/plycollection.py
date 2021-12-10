@@ -2,10 +2,10 @@ import os
 import shutil
 
 def collect_CVPMVSNet():
-    thisname = 'outputs_baseline_full_22'
-    base = '../CVP-MVSNet/' + thisname + '/fusibile_fused/'
+    thisname = 'att3_full_22'
+    base = os.path.join('outputs/CVP-MVSNet/', thisname, 'fusibile_fused')
     model_name = 'final3d_model.ply'
-    target = '../CVP-MVSNet/' + thisname + '/cvpmvsnet_results/'
+    target = os.path.join('outputs/CVP-MVSNet/', thisname, 'cvpmvsnet_results')
     method='cvpmvsnet'
     info = ''
 
@@ -19,9 +19,10 @@ def collect_CVPMVSNet():
 
         old = os.path.join(base, dir, model_dir, model_name)
         fresh = os.path.join(target, info, method) + index.zfill(3) + ".ply"
-        print(old)
-        print(fresh)
-        shutil.copyfile(old, fresh)
+        # shutil.copyfile(old, fresh)
+        shutil.move(old, fresh)
+
+    print("ply moving done!")
 
 if __name__ == '__main__':
     collect_CVPMVSNet()

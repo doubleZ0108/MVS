@@ -11,6 +11,8 @@ import torch
 import torch.nn as nn
 from models.modules import *
 from utils import *
+from models.mynet import *
+
 
 # Debug:
 # import pdb,time
@@ -94,6 +96,8 @@ class network(nn.Module):
         self.cost_reg_refine = CostRegNet()
         self.args = args
 
+        self.attnet3d = AttNet3d()
+
     def forward(self, ref_img, src_imgs, ref_in, src_in, ref_ex, src_ex, \
                     depth_min, depth_max):
 
@@ -152,18 +156,20 @@ class network(nn.Module):
             del volume_sum
             del volume_sq_sum
 
+        # @doubleZ
+        cost_att3d = self.attnet3d(cost_volume)
+        cost_att3d = F.softmax(cost_att3d)
+        cost_volume = cost_volume * cost_att3d + cost_volume
+
+
         # Regularize cost volume
         cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
 
+
         # region @doubleZ attention test
         num_depth = depth_hypos.shape[1]
-        print(type(num_depth), type(cost_reg))
-        att_net = nn.Sequential(
-            ConvBnReLU(num_depth, num_depth, 1, 1, 0),
-            ConvBnReLU(num_depth, num_depth, 1, 1, 0),
-            ConvBnReLU(num_depth, num_depth, 1, 1, 0)
-        )
-        cost_att = att_net(cost_reg.cpu())
+        attnet2d = AttNet2d(num_depth)
+        cost_att = attnet2d(cost_reg.cpu())
         cost_att = F.softmax(cost_att)
         cost_reg = cost_reg * cost_att.cuda() + cost_reg
         # endregion
@@ -188,18 +194,19 @@ class network(nn.Module):
             # 参数：高分辨率的特征体
             cost_volume = proj_cost(self.args,ref_feature_pyramid[level],src_feature_pyramids,level,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:], ref_ex, src_ex[:,:],depth_hypos)
 
+            # @doubleZ
+            cost_att3d2 = self.attnet3d(cost_volume)
+            cost_att3d2 = F.softmax(cost_att3d2)
+            cost_volume = cost_volume * cost_att3d2 + cost_volume
+
             cost_reg2 = self.cost_reg_refine(cost_volume)
             if self.args.mode == "test":
                 del cost_volume
 
             # region @doubleZ attention test
             num_depth = depth_hypos.shape[1]
-            att_net2 = nn.Sequential(
-                ConvBnReLU(num_depth, num_depth, 1, 1, 0),
-                ConvBnReLU(num_depth, num_depth, 1, 1, 0),
-                ConvBnReLU(num_depth, num_depth, 1, 1, 0)
-            )
-            cost_att2 = att_net2(cost_reg2.cpu())
+            attnet2d2 = AttNet2d(num_depth)
+            cost_att2 = attnet2d2(cost_reg2.cpu())
             cost_att2 = F.softmax(cost_att2)
             cost_reg2 = cost_reg2 * cost_att2.cuda() + cost_reg2
             # endregion

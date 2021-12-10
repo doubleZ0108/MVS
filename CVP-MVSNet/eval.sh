@@ -11,16 +11,16 @@ LOG_DIR="./logs/"
 
 
 # @TODO
-THISNAME="att3_full_22"
+THISNAME="att3d_full_22"
 
-LOAD_CKPT_DIR="./checkpoints/att3/train_dtu_128/model_000022.ckpt"
+LOAD_CKPT_DIR="./checkpoints/att3d-1209/train_dtu_128/model_000022.ckpt"
 
 OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
 
 
-CUDA_VISIBLE_DEVICES=0 python eval.py \
+CUDA_VISIBLE_DEVICES=1 python eval.py \
 \
---info="eval_baseline_full_22" \
+--info="eval_att3d_full_22" \
 --mode="test" \
 \
 --dataset_root=$DATASET_ROOT \

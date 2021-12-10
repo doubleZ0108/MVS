@@ -7,10 +7,10 @@
 DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-train-128/"
 
 # Logging
-CKPT_DIR="./checkpoints/att3/"
+CKPT_DIR="./checkpoints/att3d-1209/"
 LOG_DIR="./logs/"
 
-CUDA_VISIBLE_DEVICES=0 python train.py \
+CUDA_VISIBLE_DEVICES=0,6 python train.py \
 \
 --info="train_dtu_128" \
 --mode="train" \
