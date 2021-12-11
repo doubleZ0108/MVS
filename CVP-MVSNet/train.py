@@ -124,8 +124,9 @@ def train():
     lr_gamma = 1 / float(args.lrepochs.split(':')[1])
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones, gamma=lr_gamma,
                                                         last_epoch=start_epoch - 1)
-    last_loss = None
-    this_loss = None
+    last_loss, this_loss = None, None
+    last_error, this_error = None, None
+
     for epoch_idx in range(start_epoch, args.epochs):
         logger.info('Epoch {}:'.format(epoch_idx))
         global_step = len(train_loader) * epoch_idx
@@ -134,7 +135,14 @@ def train():
             last_loss = 999999
         else:
             last_loss = this_loss
+
+        if last_error is None:
+            last_error = 999999
+        else:
+            last_error = this_error
+
         this_loss = []
+        this_error = []
 
         for batch_idx, sample in enumerate(train_loader):
 
@@ -142,13 +150,15 @@ def train():
             global_step = len(train_loader) * epoch_idx + batch_idx
             do_summary = global_step % args.summary_freq == 0
             
-            loss = train_sample(sample, detailed_summary=do_summary)
+            loss, error_2mm = train_sample(sample, detailed_summary=do_summary)
             this_loss.append(loss)
+            this_error.append(error_2mm)
 
-            logger.info('Epoch {}/{}, Iter {}/{}, train loss = {:.3f}, time = {:.3f}'.format(epoch_idx, args.epochs, batch_idx,
-                                                                                     len(train_loader), loss,
+            logger.info('Epoch {}/{}, Iter {}/{}, train loss = {:.3f}, error = {:.3f}, time = {:.3f}'.format(epoch_idx, args.epochs, batch_idx,
+                                                                                     len(train_loader), loss, error_2mm,
                                                                                      time.time() - start_time))
             v_logger.add_scalar('train_loss', loss, global_step)
+            v_logger.add_scalar('error_2mm', error_2mm, global_step)
 
         # checkpoint
         if (epoch_idx + 1) % args.save_freq == 0:
@@ -159,8 +169,12 @@ def train():
                 "{}/model_{:0>6}.ckpt".format(args.logckptdir+args.info.replace(" ","_"), epoch_idx))
             logger.info("model_{:0>6}.ckpt saved".format(epoch_idx))
         this_loss = np.mean(this_loss)
+        this_error = np.mean(this_error)
         logger.info("Epoch loss: {:.5f} --> {:.5f}".format(last_loss, this_loss))
+        logger.info("Epoch error 2mm: {:.5f} --> {:.5f}".format(last_error, this_error))
+        
         v_logger.add_scalar('train_epoch_loss', this_loss, global_step)
+        v_logger.add_scalar('train_epoch_error', this_error, global_step)
 
         lr_scheduler.step()
 
@@ -189,9 +203,13 @@ def train_sample(sample, detailed_summary=False):
     dWidth = ref_depths.shape[3]
     loss = []
     for i in range(0,args.nscale):
-        depth_gt = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项 三四维是取左上角
+        depth_est = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]
+        depth_gt = depth_est     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项 三四维是取左上角
         mask = depth_gt>425
         loss.append(model_loss(depth_est_list[i], depth_gt.float(), mask))
+
+        if i == args.nscale - 1:
+            error_2mm = Thres_metrics(depth_est, depth_gt, mask, 2)
 
     loss = sum(loss)
 
@@ -199,7 +217,9 @@ def train_sample(sample, detailed_summary=False):
 
     optimizer.step()
 
-    return loss.data.cpu().item()
+
+
+    return loss.data.cpu().item(), error_2mm
 
 
 if __name__ == '__main__':

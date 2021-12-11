@@ -1,1 +1,1 @@
-tensorboard --logdir checkpoints/att3d-1209/ --port 22060
+tensorboard --logdir checkpoints/att_c_d_1211/ --port 22060

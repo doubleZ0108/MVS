@@ -25,6 +25,14 @@ def make_recursive_func(func):
 
     return wrapper
 
+def make_nograd_func(func):
+    def wrapper(*f_args, **f_kwargs):
+        with torch.no_grad():
+            ret = func(*f_args, **f_kwargs)
+        return ret
+
+    return wrapper
+
 @make_recursive_func
 def tocuda(vars):
     if isinstance(vars, torch.Tensor):
@@ -39,3 +47,11 @@ def tocuda(vars):
         return torch.tensor(vars).cuda()
     else:
         raise NotImplementedError("invalid input type {}".format(type(vars)))
+
+@make_nograd_func
+def Thres_metrics(depth_est, depth_gt, mask, thres):
+    assert isinstance(thres, (int, float))
+    depth_est, depth_gt = depth_est[mask], depth_gt[mask]
+    errors = torch.abs(depth_est - depth_gt)
+    err_mask = errors > thres
+    return torch.mean(err_mask.float())
