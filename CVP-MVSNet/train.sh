@@ -8,12 +8,15 @@ DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-tra
 
 # @TODO
 # Logging
-CKPT_DIR="./checkpoints/att_c_d_1211/"
-LOG_DIR="./logs/att_c_d_1211/"
+THISNAME="buf"
+CKPT_DIR="./checkpoints/"$THISNAME"/"
+LOG_DIR="./logs/"$THISNAME"/"
 
-CUDA_VISIBLE_DEVICES=7,0,1,2,3 python train.py \
+mkdir -p $LOG_DIR
+
+CUDA_VISIBLE_DEVICES=1,2 python train.py \
 \
---info="train_dtu_128" \
+--info="train_"$THISNAME \
 --mode="train" \
 \
 --dataset_root=$DATASET_ROOT \
@@ -24,7 +27,7 @@ CUDA_VISIBLE_DEVICES=7,0,1,2,3 python train.py \
 --epochs=40 \
 --lr=0.001 \
 --lrepochs="10,12,14,20:2" \
---batch_size=10 \
+--batch_size=14 \
 \
 --loadckpt='' \
 --logckptdir=$CKPT_DIR \

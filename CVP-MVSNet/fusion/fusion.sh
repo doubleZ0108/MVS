@@ -8,7 +8,7 @@ OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
 
 # @TODO
-THISNAME="att3d_full_22"
+THISNAME="att_c_d_1212"
 
 DEPTH_FOLDER="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
 

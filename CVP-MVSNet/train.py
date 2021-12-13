@@ -152,6 +152,7 @@ def train():
             
             loss, error_2mm = train_sample(sample, detailed_summary=do_summary)
             this_loss.append(loss)
+
             this_error.append(error_2mm)
 
             logger.info('Epoch {}/{}, Iter {}/{}, train loss = {:.3f}, error = {:.3f}, time = {:.3f}'.format(epoch_idx, args.epochs, batch_idx,
@@ -168,6 +169,7 @@ def train():
                 'optimizer': optimizer.state_dict()},
                 "{}/model_{:0>6}.ckpt".format(args.logckptdir+args.info.replace(" ","_"), epoch_idx))
             logger.info("model_{:0>6}.ckpt saved".format(epoch_idx))
+
         this_loss = np.mean(this_loss)
         this_error = np.mean(this_error)
         logger.info("Epoch loss: {:.5f} --> {:.5f}".format(last_loss, this_loss))
@@ -203,13 +205,12 @@ def train_sample(sample, detailed_summary=False):
     dWidth = ref_depths.shape[3]
     loss = []
     for i in range(0,args.nscale):
-        depth_est = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]
-        depth_gt = depth_est     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项 三四维是取左上角
+        depth_gt = ref_depths[:,i,:int(dHeight/2**i),:int(dWidth/2**i)]     # 两轮迭代尺寸分别是 [B, 128, 160] | [B, 64, 80]  其中第二维度的i是获取数组项 三四维是取左上角
         mask = depth_gt>425
         loss.append(model_loss(depth_est_list[i], depth_gt.float(), mask))
 
         if i == args.nscale - 1:
-            error_2mm = Thres_metrics(depth_est, depth_gt, mask, 2)
+            error_2mm = Thres_metrics(depth_est_list[i], depth_gt.float(), mask, 2)
 
     loss = sum(loss)
 

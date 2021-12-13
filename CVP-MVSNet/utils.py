@@ -50,8 +50,7 @@ def tocuda(vars):
 
 @make_nograd_func
 def Thres_metrics(depth_est, depth_gt, mask, thres):
-    assert isinstance(thres, (int, float))
     depth_est, depth_gt = depth_est[mask], depth_gt[mask]
     errors = torch.abs(depth_est - depth_gt)
     err_mask = errors > thres
-    return torch.mean(err_mask.float())
+    return torch.mean(err_mask.float()).cpu().numpy()

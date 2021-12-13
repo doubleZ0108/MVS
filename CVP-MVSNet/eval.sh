@@ -6,21 +6,23 @@
 # DATASET_ROOT="./dataset/dtu-test-1200/"
 DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
-# Logging
-LOG_DIR="./logs/"
-
 
 # @TODO
-THISNAME="att3d_full_22"
+THISNAME="buf"
 
-LOAD_CKPT_DIR="./checkpoints/att3d-1209/train_dtu_128/model_000022.ckpt"
+LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu_128/model_000022.ckpt"
 
 OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
 
+# Logging
+LOG_DIR="./logs/"$THISNAME"/"
 
-CUDA_VISIBLE_DEVICES=1 python eval.py \
+mkdir -p $LOG_DIR
+
+
+CUDA_VISIBLE_DEVICES=4 python eval.py \
 \
---info="eval_att3d_full_22" \
+--info="test_"$THISNAME \
 --mode="test" \
 \
 --dataset_root=$DATASET_ROOT \

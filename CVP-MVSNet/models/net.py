@@ -11,7 +11,6 @@ import torch
 import torch.nn as nn
 from models.modules import *
 from utils import *
-from models.mynet import *
 
 
 # Debug:
@@ -95,10 +94,7 @@ class network(nn.Module):
         self.featurePyramid = FeaturePyramid()
         self.cost_reg_refine = CostRegNet()
         self.args = args
-
-        self.attnet3d_channel = AttNet3d_channel()
-        self.attnet3d_depth = AttNet3d_depth()
-        self.attnet2d = AttNet2d()
+        
 
     def forward(self, ref_img, src_imgs, ref_in, src_in, ref_ex, src_ex, \
                     depth_min, depth_max):
@@ -158,30 +154,8 @@ class network(nn.Module):
             del volume_sum
             del volume_sq_sum
 
-        # region @doubleZ attention test
-        num_depth = depth_hypos.shape[1]
-        cost_att3d_c = self.attnet3d_channel(cost_volume)
-        cost_att3d_c = F.softmax(cost_att3d_c, dim=1)
-        # cost_volume = cost_volume * cost_att3d_c + cost_volume
-
-        cost_volume_transpose = cost_volume.transpose(1, 2)
-        cost_att3d_d = self.attnet3d_depth(cost_volume_transpose, num_depth).transpose(1, 2)
-        cost_att3d_d = F.softmax(cost_att3d_d, dim=1)
-
-        cost_volume = 0.5 * cost_att3d_c * cost_volume + 0.5 * cost_att3d_d * cost_volume + cost_volume
-        # endregion
-
-
         # Regularize cost volume
         cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
-
-
-        # region @doubleZ attention test
-        cost_att = self.attnet2d(cost_reg, num_depth)
-        cost_att = F.softmax(cost_att, dim=1)
-        cost_reg = cost_reg * cost_att + cost_reg
-        # endregion
-
 
         prob_volume = F.softmax(cost_reg, dim=1)        # (B, D, H/2, W/2)
         depth = depth_regression(prob_volume, depth_values=depth_hypos) # (B, H/2, W/2)
@@ -202,29 +176,9 @@ class network(nn.Module):
             # 参数：高分辨率的特征体
             cost_volume = proj_cost(self.args,ref_feature_pyramid[level],src_feature_pyramids,level,ref_in_multiscales[:,level,:,:], src_in_multiscales[:,:,level,:,:], ref_ex, src_ex[:,:],depth_hypos)
 
-            # region @doubleZ attention test
-            num_depth = depth_hypos.shape[1]
-            cost_att3d_channel2 = self.attnet3d_channel(cost_volume)
-            cost_att3d_channel2 = F.softmax(cost_att3d_channel2, dim=1)
-            # cost_volume = cost_volume * cost_att3d2 + cost_volume
-
-            cost_volume_transpose2 = cost_volume.transpose(1, 2)
-            cost_att3d_depth2 = self.attnet3d_depth(cost_volume_transpose2, num_depth).transpose(1, 2)
-            cost_att3d_depth2 = F.softmax(cost_att3d_depth2, dim=1)
-
-            cost_volume = 0.5 * cost_att3d_channel2 * cost_volume + 0.5 * cost_att3d_depth2 * cost_volume + cost_volume
-            # endregion
-
             cost_reg2 = self.cost_reg_refine(cost_volume)
             if self.args.mode == "test":
                 del cost_volume
-
-            # region @doubleZ attention test
-            cost_att2 = self.attnet2d(cost_reg2, num_depth)
-            cost_att2 = F.softmax(cost_att2, dim=1)
-            cost_reg2 = cost_reg2 * cost_att2 + cost_reg2
-            # endregion
-            
             
             prob_volume = F.softmax(cost_reg2, dim=1)
             if self.args.mode == "test":
