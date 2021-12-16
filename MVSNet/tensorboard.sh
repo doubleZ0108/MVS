@@ -1,1 +1,1 @@
-tensorboard --logdir checkpoints/baseline/ --port 22060
+tensorboard --logdir checkpoints/visual/ --port 22060

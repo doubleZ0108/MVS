@@ -3,6 +3,10 @@ import torchvision.utils as vutils
 import torch
 import torch.nn.functional as F
 
+import torchvision.transforms as T
+import cv2
+from PIL import Image
+
 
 # print arguments
 def print_args(args):
@@ -152,3 +156,15 @@ def Thres_metrics(depth_est, depth_gt, mask, thres):
 def AbsDepthError_metrics(depth_est, depth_gt, mask):
     depth_est, depth_gt = depth_est[mask], depth_gt[mask]
     return torch.mean((depth_est - depth_gt).abs())
+
+
+def visualize_depth(depth, cmap=cv2.COLORMAP_JET):
+    """
+    depth: (H, W)
+    """
+    with torch.no_grad():
+        x = depth.cpu().numpy().astype(np.uint8)
+        x_ = Image.fromarray(cv2.applyColorMap(x, cmap))
+        x_ = T.ToTensor()(x_) # (3, H, W)
+
+        return x_

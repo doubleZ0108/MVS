@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import cv2
 # Debug:
-# import pdb
+import pdb
 # import matplotlib.pyplot as plt
 # from verifications import *
 
@@ -205,10 +205,11 @@ def calDepthHypo(netArgs,ref_depths,ref_intrinsics,src_intrinsics,ref_extrinsics
             ans = torch.matmul(torch.inverse(M1),M2.unsqueeze(2))
             delta_d = ans[:,0,0]
 
-            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t().double()  # (H, W)
+            interval_maps = torch.abs(delta_d).mean().repeat(ref_depths.shape[2],ref_depths.shape[1]).t().float()  # (H, W)
 
             for depth_level in range(-d,d):
-                depth_hypos[batch,depth_level+d,:,:] += depth_level*interval_maps   # (B, 8, H, W)
+                # pdb.set_trace()
+                depth_hypos[batch,depth_level+d,:,:] += depth_level* interval_maps  # (B, 8, H, W)
 
         # print("Calculated:")
         # print(interval_maps[0,0])

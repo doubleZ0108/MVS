@@ -48,7 +48,7 @@ parser.add_argument('--loadckpt', default=None, help='load a specific checkpoint
 parser.add_argument('--logdir', default='./checkpoints/d192/', help='the directory to save checkpoints/logs')
 parser.add_argument('--resume', action='store_true', help='continue to train the model')
 
-parser.add_argument('--summary_freq', type=int, default=20, help='print and summary frequency')
+parser.add_argument('--summary_freq', type=int, default=100, help='print and summary frequency')
 parser.add_argument('--save_freq', type=int, default=1, help='save checkpoint frequency')
 parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed')
 
@@ -142,7 +142,13 @@ def train():
 
             if do_summary:
                 save_scalars(logger, 'train', scalar_outputs, global_step)
-                save_images(logger, 'train', image_outputs, global_step)
+                # save_images(logger, 'train', image_outputs, global_step)
+
+                # @doubleZ
+                img_ = torch.nn.functional.interpolate(image_outputs["ref_img"], scale_factor=0.25, mode='bilinear', align_corners=True)[0]
+                stack = torch.stack([image_outputs["depth_est"], image_outputs["depth_gt"], image_outputs["errormap"], img_])
+                logger.add_images('train/est-gt-errormap-img', stack, global_step)
+
             del scalar_outputs, image_outputs
             print(
                 'Epoch {}/{}, Iter {}/{}, train loss = {:.3f}, time = {:.3f}'.format(epoch_idx, args.epochs, batch_idx,
@@ -222,8 +228,8 @@ def train_sample(sample, detailed_summary=False):
 
     scalar_outputs = {"loss": loss}         # 这轮训练得到的loss
     image_outputs = {
-        "depth_est": depth_est * mask,      # 深度图估计(滤除掉本来就没有深度的位置)
-        "depth_gt": sample["depth"],        # 深度图真值
+        "depth_est": visualize_depth(depth_est[0] * mask[0]),      # 深度图估计(滤除掉本来就没有深度的位置)
+        "depth_gt": visualize_depth(sample["depth"][0]),        # 深度图真值
         "ref_img": sample["imgs"][:, 0],    # 要估计深度的ref图
         "mask": sample["mask"]              # mask图(0-1二值图，为1代表这里有深度值)
     }
@@ -233,7 +239,7 @@ def train_sample(sample, detailed_summary=False):
     # onnx.save(onnx.shape_inference.infer_shapes(onnx.load("mvsnet.onnx")), model)
 
     if detailed_summary:
-        image_outputs["errormap"] = (depth_est - depth_gt).abs() * mask                             # 预测图和真值图的区别部分
+        image_outputs["errormap"] = visualize_depth((depth_est[0] - depth_gt[0]).abs() * mask[0])                             # 预测图和真值图的区别部分
         scalar_outputs["abs_depth_error"] = AbsDepthError_metrics(depth_est, depth_gt, mask > 0.5)  # 绝对深度估计误差(整个场景深度估计的偏差平均值) mean[abs(est - gt)]
         scalar_outputs["thres2mm_error"] = Thres_metrics(depth_est, depth_gt, mask > 0.5, 2)        # 整个场景深度估计误差大于2mm的偏差偏差值(认为2mm之内都是估计的可以接受的) mean[abs(est - gt) > threshold]
         scalar_outputs["thres4mm_error"] = Thres_metrics(depth_est, depth_gt, mask > 0.5, 4)

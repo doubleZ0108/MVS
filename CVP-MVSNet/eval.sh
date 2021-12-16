@@ -8,11 +8,11 @@ DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-tes
 
 
 # @TODO
-THISNAME="buf"
+THISNAME="save"
 
-LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu_128/model_000022.ckpt"
+LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu/model_000017.ckpt"
 
-OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
+OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/buf"
 
 # Logging
 LOG_DIR="./logs/"$THISNAME"/"
@@ -20,9 +20,9 @@ LOG_DIR="./logs/"$THISNAME"/"
 mkdir -p $LOG_DIR
 
 
-CUDA_VISIBLE_DEVICES=4 python eval.py \
+CUDA_VISIBLE_DEVICES=6 python eval.py \
 \
---info="test_"$THISNAME \
+--info="test_dtu" \
 --mode="test" \
 \
 --dataset_root=$DATASET_ROOT \

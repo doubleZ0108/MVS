@@ -14,9 +14,9 @@ LOG_DIR="./logs/"$THISNAME"/"
 
 mkdir -p $LOG_DIR
 
-CUDA_VISIBLE_DEVICES=1,2 python train.py \
+CUDA_VISIBLE_DEVICES=6 python train.py \
 \
---info="train_"$THISNAME \
+--info="train_dtu" \
 --mode="train" \
 \
 --dataset_root=$DATASET_ROOT \
@@ -27,7 +27,7 @@ CUDA_VISIBLE_DEVICES=1,2 python train.py \
 --epochs=40 \
 --lr=0.001 \
 --lrepochs="10,12,14,20:2" \
---batch_size=14 \
+--batch_size=6 \
 \
 --loadckpt='' \
 --logckptdir=$CKPT_DIR \

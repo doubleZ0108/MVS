@@ -36,6 +36,3 @@ CVP-MVSNet/checkpoints/
 CVP-MVSNet/dataset/dtu-train-128/
 CVP-MVSNet/dataset/dtu-test-1200/
 CVP-MVSNet/fusion/fusibile
-
-# MyMVSNet
-MyMVSNet/
