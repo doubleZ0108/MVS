@@ -1,6 +1,6 @@
 '''
 script for solving the following issue:
-"xxx.pth is a zip archive(did you mean to use torch.jit.load()?)"
+"xxx.ckpt is a zip archive(did you mean to use torch.jit.load()?)"
 '''
 
 import os
