@@ -7,12 +7,12 @@
 DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/CVP-MVSNet/dtu-test-1200/"
 
 
-# @TODO
-THISNAME="save"
+# @TODO * 3
+THISNAME="baseline"
 
-LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu/model_000017.ckpt"
+LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu/model_000016.ckpt"
 
-OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/buf"
+OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/baseline_16"
 
 # Logging
 LOG_DIR="./logs/"$THISNAME"/"

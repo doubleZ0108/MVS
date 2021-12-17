@@ -30,5 +30,5 @@ TRAIN:
   CHECKPOINT_PERIOD: 1
   LOG_PERIOD: 100
 TEST:
-  WEIGHT: "outputs/exp/model_016.pth"
+  WEIGHT: "outputs/exp/model_pretrained.pth"
   LOG_PERIOD: 1
