@@ -21,8 +21,11 @@
 
 - fusibile深度图融合点云 [![fusibile env setup](https://img.shields.io/badge/🧪_环境配置-fusibile-yellow)](https://github.com/doubleZ0108/MVS/blob/master/fusibile/setup.md)
 - MVSNet [![MVSNet env setup](https://img.shields.io/badge/🧪_环境配置-MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) [![MVSNet code doc](https://img.shields.io/badge/🔨_代码笔记-MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
+- MVSNet_pl [![MVSNet_pl env setup](https://img.shields.io/badge/🧪_环境配置-MVSNet__pl-yellow)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet_pl/setup.md) [![MVSNet_pl code doc](https://img.shields.io/badge/🔨_代码笔记-MVSNet__pl-9cf)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet_pl/code.md)
+    > pytorch-lightning version of MVSNet
 - PointMVSNet [![PointMVSNet env setup](https://img.shields.io/badge/🧪_环境配置-PointMVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
-- CVP-MVSNet [![CVP-MVSNet env setup](https://img.shields.io/badge/🧪_环境配置-CVP_MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) [![CVP-MVSNet code doc](https://img.shields.io/badge/🔨_代码笔记-CVP_MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)
+- CVP-MVSNet [![CVP-MVSNet env setup](https://img.shields.io/badge/🧪_环境配置-CVP__MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) [![CVP-MVSNet code doc](https://img.shields.io/badge/🔨_代码笔记-CVP__MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)
+
 
 
 

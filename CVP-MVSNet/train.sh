@@ -14,7 +14,7 @@ LOG_DIR="./logs/"$THISNAME"/"
 
 mkdir -p $LOG_DIR
 
-CUDA_VISIBLE_DEVICES=6 python train.py \
+CUDA_VISIBLE_DEVICES=5 python train.py \
 \
 --info="train_dtu" \
 --mode="train" \
