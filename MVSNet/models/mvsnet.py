@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .module import *
+from .mynet import *
 
 
 class FeatureNet(nn.Module):
@@ -130,6 +131,8 @@ class MVSNet(nn.Module):
         if self.refine:
             self.refine_network = RefineNet()
 
+        # self.attnet3d_channel = AttNet3d_channel()
+
     def forward(self, imgs, proj_matrices, depth_values):
         imgs = torch.unbind(imgs, 1)            # 将[B, 3, 3, H, W]三个三通道图像Tensor -> ([B,3,H,W], [B,3,H,W],[B,3,H,W])三个数据的元组
         proj_matrices = torch.unbind(proj_matrices, 1)
@@ -165,6 +168,13 @@ class MVSNet(nn.Module):
         # aggregate multiple feature volumes by variance
         # @mark 公式(2) cost volume
         volume_variance = volume_sq_sum.div_(num_views).sub_(volume_sum.div_(num_views).pow_(2))  # @mark [B, 32, 192, H/4, W/4] 公式(2) 方差简化计算方法  \sum Vi^2 / N - (Vi_bar)^2
+
+        # @doubleZ channel attention
+        # cost_att3d_c = self.attnet3d_channel(volume_variance)
+        # cost_att3d_c = F.softmax(cost_att3d_c, dim=0)
+        # volume_variance = cost_att3d_c * volume_variance
+        # if not self.training:
+        #     del cost_att3d_c
 
         # step 3. cost volume regularization
         # @mark 这个cost网络本身是不改变维度的 只是去除噪声更加抽象，真正把32拍成1的是最后一个prob层(soft argmin)，最终的物理含义是 某一个pixel的某一个深度假设位置的概率值

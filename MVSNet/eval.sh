@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
-# V100
-DTU_TESTING="/media/public/yan1/doublez/realdoubleZ/Data/MVS/test/dtu"
-# Lab
-# MVS_TRAINING="/home/doublez/Data/MVS/test/dtu"
 
-THISNAME='buf'
+DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/test/dtu"
+# DATASET_ROOT="/media/public/yan1/doublez/realdoubleZ/Data/MVS/test/tankandtemples/intermediate/"
+DATASET_LIST="lists/dtu/test.txt"
+# DATASET_LIST="lists/tanksandtemples/test.txt"
 
-CKPT_FILE="./checkpoints/baseline/model_000015.ckpt"
+# @TODO * 2
+THISNAME='baseline'
+CKPTNUM="10"
 
-OUT_FILE="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/MVSNet/"$THISNAME
+CKPT_FILE="./checkpoints/"$THISNAME"/model_0000"$CKPTNUM".ckpt"
 
-CUDA_VISIBLE_DEVICES=4 python eval.py \
+OUTPUTNAME=$THISNAME"_"$CKPTNUM
+OUT_FILE="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/MVSNet/"$OUTPUTNAME
+
+CUDA_VISIBLE_DEVICES=3 python eval.py \
     --dataset=dtu_yao_eval \
     --batch_size=1 \
-    --testpath=$DTU_TESTING \
-    --testlist lists/dtu/mytest.txt \
+    --testpath=$DATASET_ROOT \
+    --testlist $DATASET_LIST \
     --outdir $OUT_FILE \
     --loadckpt $CKPT_FILE $@

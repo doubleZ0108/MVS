@@ -1,1 +1,1 @@
-tensorboard --logdir checkpoints/test1122/ --port 22210
+tensorboard --logdir checkpoints/att_c/ --port 22060

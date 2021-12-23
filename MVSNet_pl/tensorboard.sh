@@ -1,1 +1,1 @@
-tensorboard --logdir logs/ --port 22060
+tensorboard --logdir logs/ --port 22210
