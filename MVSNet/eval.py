@@ -44,7 +44,7 @@ print_args(args)
 
 # endregion
 
-# region 读取相机参数、图片、mask、构建ref和src对（跟MVSDataset中相关函数一样）
+# region 读取相机参数、图片、mask、构建ref和src对（eval的时候/4）
 # read intrinsics and extrinsics
 def read_camera_parameters(filename):
     with open(filename) as f:
