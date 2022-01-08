@@ -154,6 +154,8 @@ class network(nn.Module):
             del volume_sum
             del volume_sq_sum
 
+        pdb.set_trace()
+
         # Regularize cost volume
         cost_reg = self.cost_reg_refine(cost_volume)    # (B, D, H/2, W/2)
 

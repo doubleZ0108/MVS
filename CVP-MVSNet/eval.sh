@@ -12,7 +12,8 @@ THISNAME="baseline"
 
 LOAD_CKPT_DIR="./checkpoints/"$THISNAME"/train_dtu/model_000016.ckpt"
 
-OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/baseline_16"
+# OUT_DIR="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/baseline_16"
+OUT_DIR="cvptest"
 
 # Logging
 LOG_DIR="./logs/"$THISNAME"/"
@@ -20,7 +21,7 @@ LOG_DIR="./logs/"$THISNAME"/"
 mkdir -p $LOG_DIR
 
 
-CUDA_VISIBLE_DEVICES=6 python eval.py \
+CUDA_VISIBLE_DEVICES=7 python eval.py \
 \
 --info="test_dtu" \
 --mode="test" \

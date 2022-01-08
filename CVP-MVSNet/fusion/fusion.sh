@@ -8,15 +8,15 @@ OUT_FOLDER="fusibile_fused"
 FUSIBILE_EXE_PATH="./fusibile"
 
 # @TODO
-THISNAME="baseline_16"
+THISNAME="baseline_12"
 
 DEPTH_FOLDER="/media/public/yan1/doublez/realdoubleZ/Developer/Evaluation/outputs/CVP-MVSNet/"$THISNAME
 
 python2 depthfusion.py \
---dtu_test_root=$DTU_TEST_ROOT \
---depth_folder=$DEPTH_FOLDER \
---out_folder=$OUT_FOLDER \
---fusibile_exe_path=$FUSIBILE_EXE_PATH \
---prob_threshold=0.8 \
---disp_threshold=0.13 \
---num_consistent=3
+    --dtu_test_root=$DTU_TEST_ROOT \
+    --depth_folder=$DEPTH_FOLDER \
+    --out_folder=$OUT_FOLDER \
+    --fusibile_exe_path=$FUSIBILE_EXE_PATH \
+    --prob_threshold=0.8 \
+    --disp_threshold=0.13 \
+    --num_consistent=3
