@@ -85,7 +85,7 @@ print_args(args)
 MVSDataset = find_dataset_def(args.dataset)
 train_dataset = MVSDataset(args.trainpath, args.trainlist, "train", 3, args.numdepth, args.interval_scale)
 test_dataset = MVSDataset(args.testpath, args.testlist, "test", 5, args.numdepth, args.interval_scale)
-TrainImgLoader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=8, drop_last=True)    # dtop_last: 丢掉多出来的一点不用
+TrainImgLoader = DataLoader(train_dataset, args.batch_size, shuffle=False, num_workers=8, drop_last=True)    # dtop_last: 丢掉多出来的一点不用
 TestImgLoader = DataLoader(test_dataset, args.batch_size, shuffle=False, num_workers=4, drop_last=False)
 
 

@@ -41,3 +41,8 @@ CVP-MVSNet/cvptest/
 # MVSNet_pl
 MVSNet_pl/ckpts/
 MVSNet_pl/logs/
+
+# AACVP-MVSNet
+AACVP-MVSNet/outputs/
+AACVP-MVSNet/checkpointss/
+AACVP-MVSNet/logs/
