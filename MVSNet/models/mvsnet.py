@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .module import *
 from .mynet import *
-
+import pdb
 
 class FeatureNet(nn.Module):
     """
@@ -145,7 +145,7 @@ class MVSNet(nn.Module):
         # in: images; out: 32-channel feature maps
         features = [self.feature(img) for img in imgs]
         ref_feature, src_features = features[0], features[1:]       # 每一个特征[B, 32, H/4, W/4]
-    
+            
         ref_proj, src_projs = proj_matrices[0], proj_matrices[1:]
 
         # step 2. differentiable homograph, build cost volume

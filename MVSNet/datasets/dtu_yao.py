@@ -4,7 +4,7 @@ import os
 from PIL import Image
 from datasets.data_io import *
 # from data_io import *
-
+import pdb
 
 # the DTU dataset preprocessed by Yao Yao (only for training)
 class MVSDataset(Dataset):
@@ -108,6 +108,7 @@ class MVSDataset(Dataset):
                 depth_values = np.arange(depth_min, depth_interval * self.ndepths + depth_min, depth_interval, dtype=np.float32)
                 mask = self.read_img(mask_filename)
                 depth = self.read_depth(depth_filename)
+
 
         imgs = np.stack(imgs).transpose([0, 3, 1, 2])   # 每张img(512,640,3) 最终imgs(3,3,512,640)
         proj_matrices = np.stack(proj_matrices)         # (3, 4, 4) 3个4*4的投影矩阵
