@@ -1,1 +1,1 @@
-tensorboard --logdir checkpoints/att_c/ --port 22060
+tensorboard --logdir checkpoints/baseline/ --port 22060
