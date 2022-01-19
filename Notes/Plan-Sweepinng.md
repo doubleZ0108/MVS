@@ -3,6 +3,9 @@
 - 输入：一系列经过校准的照片以及拍摄相机对应的投影矩阵
 - 假设(定义)：所有物体只有漫反射，有一个虚拟相机cam x，定义一个近平面和一个远平面，在这之间物体被一系列密集的平行平面划分
 
+<img src="https://upload-images.jianshu.io/upload_images/12014150-783f766dc9699bd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" /> <img src="https://upload-images.jianshu.io/upload_images/12014150-428eaa236dce7b98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
+
+
 ## 核心思想
 
 如果平行平面足够密集，物体表面的任意一点p一定位于某平面Di上，可以看到p的相机看到点p必定是同一颜色；假设与p在同一平面的另一点p’，不位于物体表面，则投影到每个相机上呈现的颜色不同， 于是Plane Sweeping算法假设：
@@ -21,7 +24,8 @@ p计算之后，将其投影到虚拟相机cam x上，从后向前扫描，如�
 
 相机C看$x_\pi$和C’看$x_\pi$存在单应关系
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/eceff014-a492-46a8-9c49-dbf103f15d13/Untitled.png)
+<img src="https://upload-images.jianshu.io/upload_images/12014150-f18528ef490079dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
+
 
 > 省略公式和推导
 > 
@@ -30,7 +34,8 @@ p计算之后，将其投影到虚拟相机cam x上，从后向前扫描，如�
 
 有了点的对应关系，接下来就是找到cost function对其优化。由于噪声的影响，不能只利用颜色信息，需要结合窗口信息进行比较
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/17d649dd-36fe-4fe4-857c-d633041e9d0b/Untitled.png)
+<img src="https://upload-images.jianshu.io/upload_images/12014150-fad32970b77b139e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
+
 
 - **局限性**：基于窗口的匹配，窗口内像素与中心像素极可能不在一个平面(阶梯状、不连续性)，因此会干扰中心像素的匹配
 - 改进之一

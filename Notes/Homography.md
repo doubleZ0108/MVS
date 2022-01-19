@@ -23,7 +23,7 @@ $$
 
 ### 理论推导
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/27247953-715d-4677-bc09-6c225b38816a/Untitled.png)
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-35803ff0b19696c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ```python
 [U,S,V]=svd(A);
@@ -57,7 +57,7 @@ im_dst = cv2.warpPerspective(im_src, h, size)
 
 - 图像矫正
 - 图像扫描
-- 虚拟广告牌 [image:AD6C8531-179D-45AD-A6B5-973F1DE3DE8A-41990-0000A88DFAD2F366/times-square.jpg]
+- 虚拟广告牌
 
 ## Reference
 

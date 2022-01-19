@@ -2,7 +2,7 @@
 
 对立体视觉建模的一种方法(约束)，使得立体匹配问题有一个最优解
 
-![image.png](https://upload-images.jianshu.io/upload_images/12014150-78e0ab8c32da2869.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-3b9134809f9124d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 `X`: 三维空间点(研究对象)
 `C、C’`: 两摄像机中心

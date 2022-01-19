@@ -9,26 +9,23 @@
     - `f`: 相机光心到成像平面的焦距
     - `d`: 两相机的视差
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9f1efcb4-af0c-45c3-9635-7ecab6694597/Untitled.png)
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-b04da09b6d9ed728.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ## 背景概念
 
 ### 对极几何
 
-[对极几何｜Epipolar Geometry](https://www.notion.so/Epipolar-Geometry-5f85b69f8f2841de931da533d1d12898) 
+[对极几何｜Epipolar Geometry](https://github.com/doubleZ0108/MVS/blob/master/Notes/Epipolar.md) 
 
 ### 视觉模型
 
-- 汇聚式
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-dfff6d9e6834834a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ff36a8dd-7d7c-465a-8cc2-35b5c53d7daa/Untitled.png)
+- 汇聚式
 
 - 平行式
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5bd072e2-e454-47cf-b15b-8d332814ed8e/Untitled.png)
-
-> 平行式立体视觉模型中，两摄像机光轴平行，因此左右图像间对极线互相平行，且位于相同的图像平面上，因此视差矢量平行于图像的水平线，使得视差矢量退化为标量
-> 
+    > 平行式立体视觉模型中，两摄像机光轴平行，因此左右图像间对极线互相平行，且位于相同的图像平面上，因此视差矢量平行于图像的水平线，使得视差矢量退化为标量
 
 ---
 
@@ -47,7 +44,7 @@
     - 摄影测量：灰度绝对值差 AD、灰度绝对值之和 SAD、归一化相关系数 NCC
     - CV：互信息 MI、Census变换 CT、Rank变换 RT、BT等
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/037f5256-1cbd-4f99-9bae-3092a4a03269/Untitled.png)
+<img src="https://upload-images.jianshu.io/upload_images/12014150-9b18e377a7fd14a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
 
 ### 代价聚合
 
@@ -60,10 +57,9 @@
     4. 最终得到新的矩阵`S`
 - **常用方法**：扫描线法、动态规划法、SGM算法中的路径聚合法
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6558a44b-b66d-413f-907e-7748ac82054b/Untitled.png)
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-5ef71e90c288d345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 > 注：这一步极为关键，直接决定了算法的准确性
-> 
 
 ### 视差计算
 
@@ -71,9 +67,7 @@
 
 > 再次注：因为这部没什么本质性的操作，因此要求聚合效果非常好
 > 
-> 
-> ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fd321a12-fe96-4050-8275-dd74abddc595/Untitled.png)
-> 
+> <img src="https://upload-images.jianshu.io/upload_images/12014150-4c366999a461ba0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
 
 ### 视差优化
 
@@ -86,7 +80,7 @@
 - 子像素精度优化：由于WTA算法得到的视差值是整像素精度，可以对其进一步子像素细化
     - 一元二次曲线拟合算法：通过最优视差下的代价以及左右两个视差下的代价值拟合一条一元二次曲线，取二次曲线的极小值点代表的视差值作为精细化后的子像素视差值
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c53d04c9-d70a-454e-8979-ed95023fba80/Untitled.png)
+<img src="https://upload-images.jianshu.io/upload_images/12014150-1a275c2249079a18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="40%" />
 
 ---
 
