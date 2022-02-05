@@ -44,5 +44,5 @@ MVSNet_pl/logs/
 
 # AACVP-MVSNet
 AACVP-MVSNet/outputs/
-AACVP-MVSNet/checkpointss/
+AACVP-MVSNet/checkpoints/
 AACVP-MVSNet/logs/
