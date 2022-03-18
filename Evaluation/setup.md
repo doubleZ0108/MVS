@@ -4,7 +4,7 @@
 
 首先在DTU官网下载定量测试的数据集（这部分之前师兄下过就没重新下）
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/efa5ad89-b506-4223-833c-40cf69ba7504/Untitled.png)
+![image.png](https://upload-images.jianshu.io/upload_images/12014150-0e79a26c640044ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 最终的数据结构应该是
 

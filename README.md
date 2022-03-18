@@ -15,7 +15,12 @@
 | 6 | [RayNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/RayNet.md) | RayNet: Learning Volumetric 3D Reconstruction with Ray Potentials | CVPR 2018 oral | [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Paschalidou_RayNet_Learning_Volumetric_CVPR_2018_paper.html)<br />[code](https://github.com/paschalidoud/raynet) | ★★★☆ |
 | 7 | [AttMVSNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/AttMVSNet.md) | Attention-Aware Multi-View Stereo                            | CVPR 2020      | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Luo_Attention-Aware_Multi-View_Stereo_CVPR_2020_paper.html) | ★☆ |
 | 8 | [CasMVSNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/CasMVSNet.md) | Cascade Cost Volume for High-Resolution Multi-View Stereo and Stereo Matching | CVPR 2020 oral | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Gu_Cascade_Cost_Volume_for_High-Resolution_Multi-View_Stereo_and_Stereo_Matching_CVPR_2020_paper.html)<br />[code](https://github.com/alibaba/cascade-stereo) | ★★★★★ |
-| 9 | [PatchmatchNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/PatchmatchNet.md) | PatchmatchNet: Learned Multi-View Patchmatch Stereo          | CVPR 2021oral  | [paper](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_PatchmatchNet_Learned_Multi-View_Patchmatch_Stereo_CVPR_2021_paper.html)<br />[code](https://github.com/FangjinhuaWang/PatchmatchNet) | ★★★☆ |
+| 9 | [PatchmatchNet](https://github.com/doubleZ0108/MVS/blob/master/Paper-Reading/PatchmatchNet.md) | PatchmatchNet: Learned Multi-View Patchmatch Stereo          | CVPR 2021 oral | [paper](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_PatchmatchNet_Learned_Multi-View_Patchmatch_Stereo_CVPR_2021_paper.html)<br />[code](https://github.com/FangjinhuaWang/PatchmatchNet) | ★★★☆ |
+| 10 | MVSCRF | MVSCRF: Learning Multi-View Stereo With Conditional Random Fields | ICCV 2019 | [paper](https://openaccess.thecvf.com/content_ICCV_2019/html/Xue_MVSCRF_Learning_Multi-View_Stereo_With_Conditional_Random_Fields_ICCV_2019_paper.html) | ★★☆ |
+| 11 | PVA-MVSNet | Pyramid Multi-view Stereo Net with Self-adaptive View Aggregation | ECCV 2020 | [paper](https://link.springer.com/chapter/10.1007/978-3-030-58545-7_44)<br />[code](https://github.com/yhw-yhw/PVAMVSNet) | ★★★ |
+| 12 | FastMVSNet | Fast-MVSNet: Sparse-to-Dense Multi-View Stereo With Learned Propagation and Gauss-Newton Refinement | CVPR 2020 | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Yu_Fast-MVSNet_Sparse-to-Dense_Multi-View_Stereo_With_Learned_Propagation_and_Gauss-Newton_Refinement_CVPR_2020_paper.html)<br />[code](https://github.com/svip-lab/FastMVSNet) | ★★☆ |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
 
 
 <details>
@@ -39,10 +44,10 @@
 - DTU定量测试 [![DTU evaluation env setup](https://img.shields.io/badge/🧪_环境配置-DTU--Evaluation-yellow)](https://github.com/doubleZ0108/MVS/blob/master/Evaluation/setup.md)
 - MVSNet [![MVSNet env setup](https://img.shields.io/badge/🧪_环境配置-MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/setup.md) [![MVSNet code doc](https://img.shields.io/badge/🔨_代码笔记-MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet/code.md)
 - MVSNet_pl [![MVSNet_pl env setup](https://img.shields.io/badge/🧪_环境配置-MVSNet__pl-yellow)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet_pl/setup.md) [![MVSNet_pl code doc](https://img.shields.io/badge/🔨_代码笔记-MVSNet__pl-9cf)](https://github.com/doubleZ0108/MVS/blob/master/MVSNet_pl/code.md)
+    
     > pytorch-lightning version of MVSNet
 - PointMVSNet [![PointMVSNet env setup](https://img.shields.io/badge/🧪_环境配置-PointMVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/PointMVSNet/setup.md)
 - CVP-MVSNet [![CVP-MVSNet env setup](https://img.shields.io/badge/🧪_环境配置-CVP__MVSNet-yellow)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/setup.md) [![CVP-MVSNet code doc](https://img.shields.io/badge/🔨_代码笔记-CVP__MVSNet-9cf)](https://github.com/doubleZ0108/MVS/blob/master/CVP-MVSNet/code.md)
-
 
 
 
