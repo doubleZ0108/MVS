@@ -4,6 +4,7 @@
 __pycache__
 Env*
 *.pyc
+*.log
 
 doublez-*.ipynb
 
@@ -46,3 +47,7 @@ MVSNet_pl/logs/
 AACVP-MVSNet/outputs/
 AACVP-MVSNet/checkpoints/
 AACVP-MVSNet/logs/
+
+# CasMVSNet
+CasMVSNet/checkpoints
+CasMVSNet/evaluations
