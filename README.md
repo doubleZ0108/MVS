@@ -21,9 +21,16 @@
 | 12 | FastMVSNet | Fast-MVSNet: Sparse-to-Dense Multi-View Stereo With Learned Propagation and Gauss-Newton Refinement | CVPR 2020 | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Yu_Fast-MVSNet_Sparse-to-Dense_Multi-View_Stereo_With_Learned_Propagation_and_Gauss-Newton_Refinement_CVPR_2020_paper.html)<br />[code](https://github.com/svip-lab/FastMVSNet) | ★★☆ |
 | 13 | UCSNet | Deep Stereo using Adaptive Thin Volume Representation with Uncertainty Awareness | CVPR 2020 oral | [paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Cheng_Deep_Stereo_Using_Adaptive_Thin_Volume_Representation_With_Uncertainty_Awareness_CVPR_2020_paper.html)<br />[code](https://github.com/touristCheng/UCSNet) | ★★★★☆ |
 | 14 | MVSNet++ | MVSNet++: Learning Depth-Based Attention Pyramid Features for Multi-View Stereo | TIP 2020 | [paper](https://ieeexplore.ieee.org/abstract/document/9115828/) | ★☆ |
-|  |  |  |  | | |
-|  |  |  |  | | |
-|  |  |  |  | | |
+| 15 | SurfaceNet+ | SurfaceNet+: An End-to-end 3D Neural Network for Very Sparse Multi-View Stereopsis | TPAMI 2021 | | ★☆ |
+| 16 | Vis-MVSNet | Visibility-aware Multi-view Stereo Network | BMVC 2020 | | ★★★★ |
+| 17 | PVSNet | PVSNet: Pixelwise Visibility-Aware Multi-View Stereo Network. | CVPR 2020 | | ★★★★☆ |
+| 18 | D2HC-RMVSNet | Dense Hybrid Recurrent Multi-view Stereo Net with Dynamic Consistency Checking | ECCV 2020 | | ★★★ |
+| 19 | BP-MVSNet | BP-MVSNet: Belief-Propagation-Layers for Multi-View-Stereo | 3DV 2020 | | ★☆ |
+| 20 | TransMVSNet | TransMVSNet: Global Context-aware Multi-view Stereo Network with Transformers | CVPR 2022 | | ★★★☆ |
+| 21 | GBi-Net | Generalized Binary Search Network for Highly-Efficient Multi-View Stereo | CVPR 2022 | | ★★★★★ |
+| 22 | IterMVS | IterMVS: Iterative Probability Estimation for Efficient Multi-View Stereo | CVPR 2022 | | ★★☆ |
+| 23 | CIDER | Learning Inverse Depth Regression for Multi-View Stereo with Correlation Cost Volume | CVPR 2019 | | ★★★ |
+| |  | | | |  |
 
 
 <details>
