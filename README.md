@@ -31,20 +31,27 @@
 | 22 | IterMVS | IterMVS: Iterative Probability Estimation for Efficient Multi-View Stereo | CVPR 2022 | [paper](https://arxiv.org/abs/2112.05126)<br />[code](https://github.com/FangjinhuaWang/IterMVS) | ★★☆ |
 | 23 | CIDER | Learning Inverse Depth Regression for Multi-View Stereo with Correlation Cost Volume | CVPR 2019 | [paper](https://ojs.aaai.org/index.php/AAAI/article/view/6939)<br />[code](https://github.com/GhiXu/CIDER) | ★★★ |
 | 24 | UniMVSNet | Rethinking Depth Estimation for Multi-View Stereo: A Unified Representation and Focal Loss | CVPR 2022 | [paper](https://arxiv.org/abs/2201.01501)<br />[code](https://github.com/prstrive/UniMVSNet) | ★★★★ |
+| 25 | AA-RMVSNet | AA-RMVSNet: Adaptive Aggregation Recurrent Multi-View Stereo Network | ICCV 2021 | [paper](https://openaccess.thecvf.com/content/ICCV2021/html/Wei_AA-RMVSNet_Adaptive_Aggregation_Recurrent_Multi-View_Stereo_Network_ICCV_2021_paper.html)<br />[code](https://github.com/QT-Zhu/AA-RMVSNet) | ★★★ |
+| 26 | MVSTER | MVSTER: Epipolar Transformer for Efficient Multi-View Stereo | ECCV 2022 | [paper](https://link.springer.com/chapter/10.1007/978-3-031-19821-2_33)<br />[code](https://github.com/JeffWang987/MVSTER) | ★★★☆ |
+| 27 | EPP-MVSNet | EPP-MVSNet: Epipolar-Assembling Based Depth Prediction for Multi-View Stereo | CVPR 2022 | [paper](https://openaccess.thecvf.com/content/ICCV2021/html/Ma_EPP-MVSNet_Epipolar-Assembling_Based_Depth_Prediction_for_Multi-View_Stereo_ICCV_2021_paper.html)<br />[code](https://gitee.com/mindspore/mindspore/tree/master/model_zoo/research/cv/eppmvsnet) | ★★★ |
+| 28 | CDS-MVSNet | Curvature-guided dynamic scale networks for Multi-view Stereo | ICLR 2022 | [paper](https://arxiv.org/abs/2112.05999)<br />[code](https://github.com/TruongKhang/cds-mvsnet) | ★★★ |
+| 29 | LANet | Long-range Attention Network for Multi-View Stereo | WACV 2021 | [paper](https://openaccess.thecvf.com/content/WACV2021/html/Zhang_Long-Range_Attention_Network_for_Multi-View_Stereo_WACV_2021_paper.html) | ★★☆ |
+| 30 | ACMMP | Multi-Scale Geometric Consistency Guided and Planar Prior Assisted Multi-View Stereo | TPAMI 2022 | [paper](https://ieeexplore.ieee.org/abstract/document/9863705)<br />[code](https://github.com/GhiXu/ACMMP) | ★★★★★ |
+| 31 | CER-MVS | Multiview Stereo with Cascaded Epipolar RAFT | ECCV 2022 | [paper](https://link.springer.com/chapter/10.1007/978-3-031-19821-2_42)<br />[code](https://github.com/princeton-vl/CER-MVS) | ★★ |
+| 32 | NP-CVP-MVSNet | Non-parametric Depth Distribution Modelling based Depth Inference for Multi-view Stereo | CVPR 2022 | [paper](https://openaccess.thecvf.com/content/CVPR2022/html/Yang_Non-Parametric_Depth_Distribution_Modelling_Based_Depth_Inference_for_Multi-View_Stereo_CVPR_2022_paper.html)<br />[code](https://github.com/NVlabs/NP-CVP-MVSNet) | ★★★★☆ |
+| 33 | GigaMVS | GigaMVS: A Benchmark for Ultra-large-scale Gigapixel-level 3D Reconstruction | TPAMI 2021 | [paper](https://ieeexplore.ieee.org/abstract/document/9547729)<br />[code](https://github.com/THU-luvision/GigaMVS) | ★★★★ |
+| 34 | RayMVSNet | RayMVSNet: Learning Ray-based 1D Implicit Fields for Accurate Multi-View Stereo | CVPR 2022 | [paper](https://openaccess.thecvf.com/content/CVPR2022/html/Xi_RayMVSNet_Learning_Ray-Based_1D_Implicit_Fields_for_Accurate_Multi-View_Stereo_CVPR_2022_paper.html) | ★★★☆ |
+| 35 | Effi-MVS | Efficient Multi-view Stereo by Iterative Dynamic Cost Volume | CVPR 2022 | [paper](https://openaccess.thecvf.com/content/CVPR2022/html/Wang_Efficient_Multi-View_Stereo_by_Iterative_Dynamic_Cost_Volume_CVPR_2022_paper.html)<br />[code](https://github.com/bdwsq1996/Effi-MVS) | ★★★ |
 
+<br />
 
-<details>
-
-<summary>✒️基本概念</summary>
+## ✒️基本概念
 
 - [对极几何 | Epipolar Geometry](https://github.com/doubleZ0108/MVS/blob/master/Notes/Epipolar.md)
 - [单应变换 | Homography](https://github.com/doubleZ0108/MVS/blob/master/Notes/Homography.md)
 - [平面扫描 | Plan Sweeping](https://github.com/doubleZ0108/MVS/blob/master/Notes/Plan-Sweepinng.md)
 - [立体几何匹配 | Stereo Matching](https://github.com/doubleZ0108/MVS/blob/master/Notes/Stereo-Matching.md)
 - [深度图像 | RGB-D](https://github.com/doubleZ0108/MVS/blob/master/Notes/RGBD.md)
-
-
-</details>
 
 <br />
 
